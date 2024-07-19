@@ -225,27 +225,38 @@ export class GameLogic {
 
     findAverageWordsLeft(guess, wordList) {
         let score = 0;
-        let size = wordList.length;
-        let colourList = [];
-        for (let word of wordList) {
-            let scoreLine = this.calculateScore(word, guess);
-            let found = false;
-            for (let i = 0; i < colourList.length; i++) {
-                let colourArray = colourList[i];
-                if (this.sameColours(scoreLine, colourArray[0])) {
-                    found = true;
-                    colourArray[1]++;
-                    break;
-                }
-            }
-            if (!found) {
-                colourList.push([scoreLine, 1]);
+        const size = wordList.length;
+        const colourOccurrences = new Map();
+    
+        // Iterate over each word in the wordList
+        for (const tempAnswer of wordList) {
+            const coloursList = this.getColours(guess, tempAnswer);
+    
+            // Convert the colours array to a string key for the Map
+            const key = JSON.stringify(coloursList);
+    
+            // Update the colourOccurrences map
+            colourOccurrences.set(key, (colourOccurrences.get(key) || 0) + 1);
+        }
+    
+        // Iterate over each entry in the colourOccurrences map
+        for (const [key, occurrenceCount] of colourOccurrences.entries()) {
+            let tempList = [...wordList]; // Copy the wordList
+            const coloursList = JSON.parse(key); // Convert the key back to an array
+    
+            // Get the temporary information based on the guess and colours list
+            const tempInfo = this.getInfo(guess.split(''), coloursList);
+    
+            // Reduce the tempList based on the temporary information
+            tempList = this.reduceList(tempInfo, tempList);
+    
+            const containsOnlyGuess = tempList.length === 1 && tempList[0] === guess;
+    
+            if (!containsOnlyGuess) {
+                score += tempList.length * occurrenceCount;
             }
         }
-        for (let colourArray of colourList) {
-            let numberWords = colourArray[1];
-            score += (numberWords * numberWords);
-        }
+    
         return score / size;
     }
 
@@ -278,7 +289,38 @@ export class GameLogic {
         }
         return score;
     }
-
+    getColours(guess, answer) {
+        const coloursGuess = Array(guess.length).fill(0);
+        const coloursAnswer = Array(guess.length).fill(0);
+    
+        // First pass: set colours to 2 where characters match
+        for (let i = 0; i < coloursAnswer.length; i++) {
+            if (guess.charAt(i) === answer.charAt(i)) {
+                coloursGuess[i] = 2;
+                coloursAnswer[i] = 2;
+            }
+        }
+    
+        // Second pass: set colours to 1 where characters match but positions don't
+        for (let i = 0; i < coloursAnswer.length; i++) {
+            if (coloursAnswer[i] !== 0) {
+                continue;
+            }
+            for (let j = 0; j < coloursGuess.length; j++) {
+                if (coloursGuess[j] !== 0) {
+                    continue;
+                }
+                if (guess.charAt(j) === answer.charAt(i)) {
+                    coloursGuess[j] = 1;
+                    coloursAnswer[i] = 1;
+                    break;
+                }
+            }
+        }
+    
+        return coloursGuess;
+    }
+    
     getAnswerList() {
         return ["hello", "world", "crate"];  // Simplified
     }
@@ -295,7 +337,7 @@ async function fetchWordList(fileName) {
             throw new Error('Failed to fetch');
         }
         const data = await response.text(); // Wait for the text data from the response
-        const wordList = data.trim().split('\n');
+        const wordList = data.trim().split('\r\n');
         return wordList;
     } catch (error) {
         console.error('Error fetching the file:', error);

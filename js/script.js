@@ -1,6 +1,11 @@
+import { GameLogic } from './gameLogic.js';
+
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("hello");
     const ROWS = 6;
     const COLUMNS = 5;
+    const answerList = '../assets/possibleAnswers.txt';
+    const guessList = '../assets/possibleGuesses.txt';
     let buttons = [];
     let clickCounts = Array.from({ length: ROWS }, () => Array(COLUMNS).fill(0));
     let characters = Array.from({ length: ROWS }, () => Array(COLUMNS).fill(' '));
@@ -10,6 +15,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const titleLabel = document.getElementById('titleLabel');
     const gridPane = document.getElementById('gridPane');
 
+    // Initialize the worker
+    let worker= null; 
+
+    // Handle messages from the worker
+    
+    function terminateWorker() {
+        if (worker) {
+            worker.terminate();
+            worker = null;
+            console.log('Worker terminated');
+        } else {
+            console.error('Worker is not running');
+        }
+    }
     function initializeButtons() {
         for (let row = 0; row < ROWS; row++) {
             buttons[row] = [];
@@ -46,16 +65,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function manageCalculationThread() {
         updateTitleText('Thinking...');
-        // Simulate asynchronous calculation
-        setTimeout(() => {
-            const result = calculate(characters, clickCounts, lastActivatedRow);
+        // Send data to the worker
+        if (worker) {
+            worker.terminate();
+            worker = null;
+            console.log('Worker terminated');
+        } 
+        worker = new Worker('./js/worker.js', { type: 'module' });
+        worker.onmessage = function(event) {
+            const result = event.data;
             updateTitleText(result);
-        }, 1000);
-    }
-
-    function calculate(characters, clickCounts, lastActivatedRow) {
-        // Placeholder for game logic calculation
-        return 'Calculation Complete';
+        };
+        const data = {
+            rows: ROWS,
+            columns: COLUMNS,
+            answerList,
+            guessList,
+            characters,
+            clickCounts,
+            lastActivatedRow,
+            bigPool: false
+        };
+        worker.postMessage(data);
     }
 
     function activateNextRow() {
@@ -86,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleKeyPress(event) {
         if (event.key === 'Enter') {
+            event.preventDefault();
             activateNextRow();
             manageCalculationThread();
         } else if (event.key === 'Backspace') {
@@ -113,6 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', handleKeyPress);
 
     initializeButtons();
+    
+    manageCalculationThread();
     gridPane.focus();
 });
-
