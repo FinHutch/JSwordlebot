@@ -24,19 +24,23 @@ export class GameLogic {
     }
 
     async calculate(characters, clickCounts, lastActivatedRow, bigPool = false) {
-        await this.initialize(); // Ensure the lists are fully loaded before calculation
+        await this. initialize(); // Ensure the lists are fully loaded before calculation
 
         let allLetterInfo = this.addRowInformation(characters, clickCounts, lastActivatedRow, bigPool);
 
         if (lastActivatedRow === -1) {
-            return "next guess: crate";
+            return "crate";
         } else if (lastActivatedRow === 0) {
             let firstGuess = characters[0].join('');
             let colours = this.getModulo3List(clickCounts[0]);
             if (this.bestSecondGuessesMap.has(firstGuess)) {
                 let nextGuess = this.bestSecondGuessesMap.get(firstGuess).get(colours);
-                return `next guess: ${nextGuess}`;
+                return nextGuess;
             }
+           
+        }
+        if (clickCounts[lastActivatedRow].every(value => value % 3 === 2)){
+            return "solved";
         }
 
         let wordList = bigPool ? this.guessList : this.answerList;
@@ -46,17 +50,15 @@ export class GameLogic {
 
         if (allLetterInfo.length === 0) {
             if (bigPool) {
-                return 'No available words!';
+                return '';
             } else {
                 return await this.calculate(characters, clickCounts, lastActivatedRow, true);
             }
         }
 
-        if (nextGuess === " ") {
-            return "No available words!";
-        }
+        
 
-        return `next guess: ${nextGuess}`;
+        return nextGuess;
     }
 
     getModulo3List(array) {
@@ -330,7 +332,7 @@ export class GameLogic {
     }
 }
 
-async function fetchWordList(fileName) {
+export async function fetchWordList(fileName) {
     try {
         const response = await fetch(fileName); // Wait for the fetch operation to complete
         if (!response.ok) {
