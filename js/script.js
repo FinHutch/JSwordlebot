@@ -1,17 +1,20 @@
-import { GameLogic } from './gameLogic.js';
+import { GameLogic, fetchWordList } from './gameLogic.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     console.log("hello");
     const ROWS = 6;
     const COLUMNS = 5;
     const answerList = '../assets/possibleAnswers.txt';
     const guessList = '../assets/possibleGuesses.txt';
+    const secondGuessesList = '../assets/secondGuesses.txt';
     let buttons = [];
     let clickCounts = Array.from({ length: ROWS }, () => Array(COLUMNS).fill(0));
     let characters = Array.from({ length: ROWS }, () => Array(COLUMNS).fill(' '));
     let lastActivatedRow = -1;
     let currentColumn = 0;
-
+    const answerlist = await fetchWordList(answerList);
+    const guesslist = await fetchWordList(guessList);
+    
     const titleLabel = document.getElementById('titleLabel');
     const gridPane = document.getElementById('gridPane');
 
@@ -81,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             columns: COLUMNS,
             answerList,
             guessList,
+            secondGuessesList,
             characters,
             clickCounts,
             lastActivatedRow,
@@ -91,11 +95,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function activateNextRow() {
         if (lastActivatedRow < ROWS - 1 && currentColumn === COLUMNS) {
-            currentColumn = 0;
-            lastActivatedRow++;
-            for (let col = 0; col < COLUMNS; col++) {
-                buttons[lastActivatedRow][col].disabled = false;
-                buttons[lastActivatedRow][col].style.backgroundColor = 'grey';
+            if(guesslist.includes(characters[lastActivatedRow+1].join(''))){
+                currentColumn = 0;
+                lastActivatedRow++;
+                for (let col = 0; col < COLUMNS; col++) {
+                    buttons[lastActivatedRow][col].disabled = false;
+                    buttons[lastActivatedRow][col].style.backgroundColor = 'grey';
+                }
             }
         }
     }

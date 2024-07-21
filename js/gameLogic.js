@@ -9,21 +9,22 @@ class LetterInfo {
 }
 
 export class GameLogic {
-    constructor(rows, columns, answerList, guessList) {
+    constructor(rows, columns, answerList, guessList,secondGuessesList) {
         this.ROWS = rows;
         this.COLUMNS = columns;
         this.answerListPromise = fetchWordList(answerList);
         this.guessListPromise = fetchWordList(guessList);
         this.letterInfoList = [];
-        this.bestSecondGuessesMap = new Map();
+        this.bestSecondGuesses = fetchGuessesList(secondGuessesList);
     }
 
     async initialize() {
         this.answerList = await this.answerListPromise;
         this.guessList = await this.guessListPromise;
+        this.secondGuesses = await this.bestSecondGuesses;
     }
 
-    async calculate(characters, clickCounts, lastActivatedRow, bigPool = false) {
+    async calculate(characters, clickCounts, lastActivatedRow, bigPool = false, store = false) {
         await this. initialize(); // Ensure the lists are fully loaded before calculation
 
         let allLetterInfo = this.addRowInformation(characters, clickCounts, lastActivatedRow, bigPool);
@@ -33,9 +34,12 @@ export class GameLogic {
         } else if (lastActivatedRow === 0) {
             let firstGuess = characters[0].join('');
             let colours = this.getModulo3List(clickCounts[0]);
-            if (this.bestSecondGuessesMap.has(firstGuess)) {
-                let nextGuess = this.bestSecondGuessesMap.get(firstGuess).get(colours);
-                return nextGuess;
+            colours = this.base3ToBase10(colours.join(''))
+            let guessIndex = this.secondGuesses.findIndex(subArray => subArray[0] === firstGuess);
+            if (guessIndex != -1) {
+                let nextGuess = this.secondGuesses[guessIndex][colours+1];
+                if (nextGuess != ' '){return nextGuess;}
+                
             }
            
         }
@@ -45,10 +49,15 @@ export class GameLogic {
 
         let wordList = bigPool ? this.guessList : this.answerList;
         wordList = this.reduceList(allLetterInfo, wordList);
+        let nextGuess;
+        if (lastactivatedRow ==4){
+            nextGuess = this.findBestGuess(wordList, this.answerList); 
+        }else{
+            nextGuess = this.findBestGuess(wordList, this.guessList);
+        }
+        
 
-        let nextGuess = this.findBestGuess(wordList, this.guessList);
-
-        if (allLetterInfo.length === 0) {
+        if (wordList.length === 0) {
             if (bigPool) {
                 return '';
             } else {
@@ -322,13 +331,23 @@ export class GameLogic {
     
         return coloursGuess;
     }
-    
+    base3ToBase10(base3) {
+        let base10 = 0;
+        const length = base3.length;
+
+        for (let i = 0; i < length; i++) {
+            const digit = parseInt(base3[length - 1 - i], 10);
+            base10 += digit * Math.pow(3, i);
+        }
+
+        return base10;
+    }
     getAnswerList() {
-        return ["hello", "world", "crate"];  // Simplified
+        return answerList;  // Simplified
     }
 
     getGuessList() {
-        return ["hello", "world", "crate", "other"];  // Simplified
+        return guessList;  // Simplified
     }
 }
 
@@ -346,3 +365,30 @@ export async function fetchWordList(fileName) {
         return []; // Return an empty array in case of error
     }
 }
+export async function fetchGuessesList(fileName) {
+    try {
+        const response = await fetch(fileName); // Wait for the fetch operation to complete
+        if (!response.ok) {
+            throw new Error('Failed to fetch');
+        }
+        const data = await response.text(); // Wait for the text data from the response
+        
+        // Remove any unwanted characters and parse the content
+        const cleanedData = data.trim();
+        
+        // Convert string to JavaScript object
+        const wordList = JSON.parse(cleanedData); // Convert string to JavaScript object
+        
+        // Ensure it's a 2-dimensional array
+        if (Array.isArray(wordList) && wordList.every(subArray => Array.isArray(subArray))) {
+            return wordList;
+        } else {
+            throw new Error('Invalid file format');
+        }
+    } catch (error) {
+        console.error('Error fetching the file:', error);
+        return []; // Return an empty array in case of error
+    }
+}
+
+

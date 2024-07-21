@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const COLUMNS = 5;
     const answerList = '../assets/possibleAnswers.txt';
     const guessList = '../assets/possibleGuesses.txt';
+    const secondGuessesList = '../assets/secondGuesses.txt';
     let buttons1 = [];
     let buttons2 = [];
     let calculating = true;
@@ -24,7 +25,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     let lastActivatedRow = -1;
     let currentColumn = 0;
     const answerlist = await fetchWordList(answerList);
-    const gamelogic = new GameLogic(ROWS,COLUMNS,answerList,guessList);
+    const guesslist = await fetchWordList(guessList);
+    const gamelogic = new GameLogic(ROWS,COLUMNS,answerList,guessList,secondGuessesList);
     let answer = getRandomString(answerlist);
 
     const titleLabel1 = document.getElementById('titleLabel1');
@@ -100,6 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             columns: COLUMNS,
             answerList,
             guessList,
+            secondguessesList,
             characters: characters2,
             clickCounts: clickCounts2,
             lastActivatedRow,
@@ -110,55 +113,56 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function activateNextRow() {
         
-        if (lastActivatedRow < ROWS - 1 && currentColumn == COLUMNS && calculating == false) {
-            currentColumn = 0;
-            lastActivatedRow++;
-            if(characters1[lastActivatedRow].join('') == answer && !playerSolved){ playerSolved =1+lastActivatedRow;updateColours1(lastActivatedRow);}
-            if(characters2[lastActivatedRow].join('') == answer && !computerSolved){computerSolved =1+ lastActivatedRow;updateColours2(lastActivatedRow);}
-            if (!playerSolved && !computerSolved){
-                updateColours1(lastActivatedRow);
-                updateColours2(lastActivatedRow);
-                manageCalculationThread();
-            } else if (playerSolved && !computerSolved) {
-                updateColours2(lastActivatedRow);
-                manageCalculationThread();
-                showComputerLetters();
-                // Wait for `calculating` to become false before continuing
-                waitForVariableChange(() => calculating, false).then(() => {
-                    currentColumn = COLUMNS;
-                    activateNextRow();
-                    updateTitleText1("calculating...");
-                });
-            }
-            else if (computerSolved && !playerSolved){
-                if (computerSolved==lastActivatedRow+1){
-                    showGameModal('fail',false)
+        if (lastActivatedRow < ROWS - 1 && calculating == false) {
+            if(guesslist.includes(characters1[lastActivatedRow+1].join(''))){
+                currentColumn = 0;
+                lastActivatedRow++;
+                if(characters1[lastActivatedRow].join('') == answer && !playerSolved){ playerSolved =1+lastActivatedRow;updateColours1(lastActivatedRow);}
+                if(characters2[lastActivatedRow].join('') == answer && !computerSolved){computerSolved =1+ lastActivatedRow;updateColours2(lastActivatedRow);}
+                if (!playerSolved && !computerSolved){
                     updateColours1(lastActivatedRow);
+                    updateColours2(lastActivatedRow);
+                    manageCalculationThread();
+                } else if (playerSolved && !computerSolved) {
+                    updateColours2(lastActivatedRow);
+                    manageCalculationThread();
+                    showComputerLetters();
+                    // Wait for `calculating` to become false before continuing
+                    waitForVariableChange(() => calculating, false).then(() => {
+                        currentColumn = COLUMNS;
+                        activateNextRow();
+                        updateTitleText1("calculating...");
+                    });
                 }
-                else
-                {
-                    updateColours1(lastActivatedRow);
-                    updateTitleText2("ha I win!")
+                else if (computerSolved && !playerSolved){
+                    if (computerSolved==lastActivatedRow+1){
+                        showGameModal('fail',false)
+                        updateColours1(lastActivatedRow);
+                    }
+                    else
+                    {
+                        updateColours1(lastActivatedRow);
+                        updateTitleText2("ha I win!")
+                    }
                 }
+                else if (computerSolved && playerSolved){
+                    showComputerLetters();
+                    if (computerSolved==playerSolved){
+                    updateTitleText2("it's a tie")}
+                    else if (computerSolved>playerSolved){
+                        showGameModal("win");
+                    }else{
+                        showGameModal("fail",false);
+                    }
+    
+                }
+                
+                if (lastActivatedRow == ROWS -1 &&calculating == false){
+                    if (playerSolved ==computerSolved){showGameModal('tie');}
+                    else if (!playerSolved){showGameModal('fail')}
+                    else {showGameModal('win');}
+                } 
             }
-            else if (computerSolved && playerSolved){
-                showComputerLetters();
-                if (computerSolved==playerSolved){
-                updateTitleText2("it's a tie")}
-                else if (computerSolved>playerSolved){
-                    showGameModal("win");
-                }else{
-                    showGameModal("fail",false);
-                }
-  
-            }
-            
-            if (lastActivatedRow == ROWS -1 &&calculating == false){
-                if (playerSolved ==computerSolved){showGameModal('tie');}
-                else if (!playerSolved){showGameModal('fail')}
-                else {showGameModal('win');}
-            } 
-            
         }
     }
     
@@ -317,6 +321,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     manageCalculationThread();
     gridPane1.focus();
 });
+
 function getRandomString(stringList) {
     if (stringList.length === 0) {
         throw new Error('The list is empty.');
