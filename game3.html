@@ -4,13 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tile Game</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles2.css">
 </head>
 <body>
     <div id="game-container">
         <h1 id="titleLabel">Tile Game</h1>
         <div id="gridPane"></div>
     </div>
-    <script type="module" src="js/calculationHelp.js"></script>
+    <div id="gameModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Epic Fail!</h2>
+            <p id="modalMessage">Would you like to try again or continue?</p>
+            <button id="tryAgainBtn">Try Again</button>
+            <button id="continueBtn">Continue</button>
+        </div>
+    </div>
+    <script type="module" src="js/regscript.js"></script>
 </body>
 </html>
