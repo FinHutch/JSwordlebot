@@ -50,7 +50,7 @@ export class GameLogic {
         let wordList = bigPool ? this.guessList : this.answerList;
         wordList = this.reduceList(allLetterInfo, wordList);
         let nextGuess;
-        if (lastactivatedRow ==4){
+        if (lastActivatedRow ==4){
             nextGuess = this.findBestGuess(wordList, this.answerList); 
         }else{
             nextGuess = this.findBestGuess(wordList, this.guessList);

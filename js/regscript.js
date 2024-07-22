@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if(guesslist.includes(characters[lastActivatedRow+1].join(''))){
                 currentColumn = 0;
                 lastActivatedRow++;
-                if(characters[lastActivatedRow].join('') == answer){ playerSolved =1+lastActivatedRow;updateColours1(lastActivatedRow);}
+                if(characters[lastActivatedRow].join('') == answer){ playerSolved =1+lastActivatedRow;updateColours(lastActivatedRow);}
                 if (!playerSolved){
                     updateColours(lastActivatedRow);
                     if (lastActivatedRow == ROWS -1 ){

@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             columns: COLUMNS,
             answerList,
             guessList,
-            secondguessesList,
+            secondGuessesList,
             characters: characters2,
             clickCounts: clickCounts2,
             lastActivatedRow,
