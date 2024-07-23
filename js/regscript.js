@@ -1,5 +1,14 @@
 import { GameLogic, fetchWordList } from './gameLogic.js';
+export function toggleDropdown() {
+    var dropdown = document.getElementById("dropdown");
+    if (dropdown.style.display === "block") {
+        dropdown.style.display = "none";
+    } else {
+        dropdown.style.display = "block";
+    }
+}
 
+window.toggleDropdown = toggleDropdown;
 document.addEventListener('DOMContentLoaded', async () => {
 
     const gameModal = document.getElementById('gameModal');
@@ -7,6 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modalMessage = document.getElementById('modalMessage');
     const tryAgainBtn = document.getElementById('tryAgainBtn');
     const continueBtn = document.getElementById('continueBtn');
+    let keyColours = Array(26).fill(-1);
 
     const ROWS = 6;
     const COLUMNS = 5;
@@ -23,9 +33,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const guesslist = await fetchWordList(guessList);
     const gamelogic = new GameLogic(ROWS,COLUMNS,answerList,guessList,secondGuessesList);
     let answer = getRandomString(answerlist);
+    const colourCodes = ['lightgrey','grey','#C9B458','#6AAA64'];
 
-    const titleLabel1 = document.getElementById('titleLabel');
-    const gridPane1 = document.getElementById('gridPane');
+    const titleLabel = document.getElementById('titleLabel');
+    const gridPane = document.getElementById('gridPane');
 
 
     // Initialize the worker
@@ -33,13 +44,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     function initializeButtons() {
         for (let row = 0; row < ROWS; row++) {
             buttons[row] = [];
-            buttons[row] = [];
             for (let col = 0; col < COLUMNS; col++) {
                 const button = document.createElement('button');
 
                 button.style.backgroundColor = 'white';
                 button.disabled = true;
-                gridPane1.appendChild(button);
+                gridPane.appendChild(button);
                 buttons[row][col] = button;
             }
         }
@@ -59,6 +69,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 currentColumn = 0;
                 lastActivatedRow++;
                 if(characters[lastActivatedRow].join('') == answer){ playerSolved =1+lastActivatedRow;updateColours(lastActivatedRow);}
+                for (let col = 0; col < COLUMNS; col++) {
+                    buttons[lastActivatedRow][col].disabled = false;
+                    buttons[lastActivatedRow][col].style.backgroundColor = 'grey';
+                    buttons[lastActivatedRow][col].style.color = 'white';
+                    buttons[lastActivatedRow][col].style.border = '0px';
+                }
                 if (!playerSolved){
                     updateColours(lastActivatedRow);
                     if (lastActivatedRow == ROWS -1 ){
@@ -86,11 +102,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     
         for (let col = 0; col < clickCounts[row].length; col++) {
             if (clickCounts[row][col] === 0) {
-                buttons[row][col].style.backgroundColor = 'grey';
+                buttons[row][col].style.backgroundColor = colourCodes[1];
             } else if (clickCounts[row][col] === 1) {
-                buttons[row][col].style.backgroundColor = 'yellow';
+                buttons[row][col].style.backgroundColor = colourCodes[2];
             } else if (clickCounts[row][col] === 2) {
-                buttons[row][col].style.backgroundColor = 'green';
+                buttons[row][col].style.backgroundColor = colourCodes[3];
             }
     
         }
@@ -127,7 +143,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             typeLetter(letter);
         }
     }
-
+    
     function typeLetter(letter) {
         if (letter.length === 1 && /[a-zA-Z]/.test(letter) && currentColumn < COLUMNS) {
             buttons[lastActivatedRow + 1][currentColumn].textContent = letter.toUpperCase();
@@ -135,8 +151,46 @@ document.addEventListener('DOMContentLoaded', async () => {
             currentColumn++;
         }
     }
+    function initializeKeys() {
+        // Query all the buttons with the class 'key'
+        const keyInfo = document.querySelectorAll('#keyboard-container .key');
+        const keys = Array(26).fill(null);
+    
+        // Iterate over each button
+        keyInfo.forEach(button => {
+            const keyText = button.textContent.toLowerCase(); // Get the text and normalize it
+    
+            // Check if the button text is a single letter (ignore special keys)
+            if (keyText.length === 1 && /^[a-z]$/.test(keyText)) {
+                const index = keyText.charCodeAt(0) - 'a'.charCodeAt(0); // Calculate index (0 for 'a', 1 for 'b', etc.)
+                keys[index] = button; // Store the button in the array
+            }
+        });
+    
+        
+    
+        return keys;
+    }
 
      // Function to show the modal
+     function handleKeyClick(event) {
+        const button = event.target; // Get the clicked button element
+        const buttonText = button.textContent.trim(); // Get the text of the button
+        if (button.className==('key backspace')){
+            event.key = 'Backspace'
+            handleKeyPress(event)
+        }
+        if (buttonText=='ENTER'){
+            event.key = 'Enter';
+            handleKeyPress(event);
+        }
+        event.key = buttonText
+        // Output the text of the clicked button
+        typeLetter(buttonText)
+    
+        // You can use the buttonText variable to perform further actions
+        // For example, appending it to a display area or processing it in some way
+    }
      function showGameModal(state, disableContinue = true) {
         // Update modal title and message based on the state
         switch(state) {
@@ -198,9 +252,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // You can call this function wherever needed in your code
 
     document.addEventListener('keydown', handleKeyPress);
-
-    initializeButtons();
     
+    initializeButtons();
+    const keys = initializeKeys();
+    document.querySelectorAll('#keyboard-container .key').forEach(button => {
+        button.addEventListener('click', handleKeyClick);
+    });
     gridPane1.focus();
 });
 
@@ -214,4 +271,15 @@ function getRandomString(stringList) {
     
     // Return the string at the random index
     return stringList[randomIndex];
+}
+window.onclick = function(event) {
+    if (!event.target.matches('.menu-button')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.style.display === "block") {
+                openDropdown.style.display = "none";
+            }
+        }
+    }
 }

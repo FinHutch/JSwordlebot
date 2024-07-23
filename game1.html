@@ -8,7 +8,21 @@
 </head>
 <body>
     <div class="top-bar">
-        <h1 id="titleLabel">Tile Game</h1>
+        <button class="menu-button" onclick="toggleDropdown()">☰</button>
+        <div id="dropdown" class="dropdown-content">
+            <a href="game1.html">Worlde solver</a>
+            <a href="game2.html">beat the bot</a>
+            <a href="game3.html">Regular wordle</a>
+        </div>
+        <h1 id="titleLabel">Wordle Bot</h1>
+    </div>
+    <div id="gameModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Epic Fail!</h2>
+            <p id="modalMessage">Would you like to try again or continue?</p>
+            <button id="tryAgainBtn">Try Again</button>
+            <button id="continueBtn">Continue</button>
+        </div>
     </div>
     <div id="game-container">
 

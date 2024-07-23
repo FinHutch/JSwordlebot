@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modalMessage = document.getElementById('modalMessage');
     const tryAgainBtn = document.getElementById('tryAgainBtn');
     const continueBtn = document.getElementById('continueBtn');
-
+    const debug = false;
     const ROWS = 6;
     const COLUMNS = 5;
     const answerList = '../assets/possibleAnswers.txt';
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const guesslist = await fetchWordList(guessList);
     const gamelogic = new GameLogic(ROWS,COLUMNS,answerList,guessList,secondGuessesList);
     let answer = getRandomString(answerlist);
-
+    
     const titleLabel1 = document.getElementById('titleLabel1');
     const gridPane1 = document.getElementById('gridPane1');
 
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const result = event.data;
             characters2[lastActivatedRow+1] = result.split('');
             if (result == 'solved'){
-                computerSolved=lastActivatedRow;
+                computerSolved=lastActivatedRow+1;
             }else{
                 updateTitleText2("ready to move!")
             }
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function activateNextRow() {
         
         if (lastActivatedRow < ROWS - 1 && calculating == false) {
-            if(guesslist.includes(characters1[lastActivatedRow+1].join(''))){
+            if(playerSolved || guesslist.includes(characters1[lastActivatedRow+1].join(''))){
                 currentColumn = 0;
                 lastActivatedRow++;
                 if(characters1[lastActivatedRow].join('') == answer && !playerSolved){ playerSolved =1+lastActivatedRow;updateColours1(lastActivatedRow);}
@@ -131,7 +131,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     waitForVariableChange(() => calculating, false).then(() => {
                         currentColumn = COLUMNS;
                         activateNextRow();
-                        updateTitleText1("calculating...");
                     });
                 }
                 else if (computerSolved && !playerSolved){
@@ -317,7 +316,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.addEventListener('keydown', handleKeyPress);
 
     initializeButtons();
-    
+    if (debug){updateTitleText1(answer)};
     manageCalculationThread();
     gridPane1.focus();
 });

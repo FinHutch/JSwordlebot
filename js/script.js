@@ -1,5 +1,13 @@
 import { GameLogic, fetchWordList } from './gameLogic.js';
-
+export function toggleDropdown() {
+    var dropdown = document.getElementById("dropdown");
+    if (dropdown.style.display === "block") {
+        dropdown.style.display = "none";
+    } else {
+        dropdown.style.display = "block";
+    }
+}
+window.toggleDropdown = toggleDropdown;
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("hello");
     const ROWS = 6;
@@ -7,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const answerList = '../assets/possibleAnswers.txt';
     const guessList = '../assets/possibleGuesses.txt';
     const secondGuessesList = '../assets/secondGuesses.txt';
-    let keyColours = Array(26).fill(-1)
+    let keyColours = Array(26).fill(-1);
     let buttons = [];
     let clickCounts = Array.from({ length: ROWS }, () => Array(COLUMNS).fill(0));
     let characters = Array.from({ length: ROWS }, () => Array(COLUMNS).fill(''));
@@ -15,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let currentColumn = 0;
     const answerlist = await fetchWordList(answerList);
     const guesslist = await fetchWordList(guessList);
-    const colourCodes = ['lightgrey','grey','#C9B458','#6AAA64']
+    const colourCodes = ['lightgrey','grey','#C9B458','#6AAA64'];
     const titleLabel = document.getElementById('titleLabel');
     const gridPane = document.getElementById('gridPane');
 
@@ -67,7 +75,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 break;
         }
     }
-
+    
+    window.onclick = function(event) {
+        if (!event.target.matches('.menu-button')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.style.display === "block") {
+                    openDropdown.style.display = "none";
+                }
+            }
+        }
+    }
     function manageCalculationThread() {
         updateTitleText('Thinking...');
         // Send data to the worker
@@ -79,7 +98,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         worker = new Worker('./js/worker.js', { type: 'module' });
         worker.onmessage = function(event) {
             const result = event.data;
-            updateTitleText(result);
+            if (result=='solved'){
+                updateTitleText("You did it!!");
+            }else{
+                updateTitleText("Best guess: "+ result);
+            }
         };
         const data = {
             rows: ROWS,
@@ -233,3 +256,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     manageCalculationThread();
     gridPane.focus();
 });
+
+window.onclick = function(event) {
+    if (!event.target.matches('.menu-button')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.style.display === "block") {
+                openDropdown.style.display = "none";
+            }
+        }
+    }
+}
