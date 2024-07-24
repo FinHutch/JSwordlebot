@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelectorAll('#keyboard-container .key').forEach(button => {
         button.addEventListener('click', handleKeyClick);
     });
-    gridPane1.focus();
+    gridPane.focus();
 });
 
 function getRandomString(stringList) {

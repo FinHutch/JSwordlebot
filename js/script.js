@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 manageCalculationThread();
             } else {
                 currentColumn--;
-                buttons[lastActivatedRow + 1][currentColumn].textContent = ' ';
+                buttons[lastActivatedRow + 1][currentColumn].textContent = '';
                 buttons[lastActivatedRow + 1][currentColumn].style.borderColor = 'lightgrey';
             }
         } else {
