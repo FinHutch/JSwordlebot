@@ -1,5 +1,13 @@
 import { GameLogic, fetchWordList } from './gameLogic.js';
-
+export function toggleDropdown() {
+    var dropdown = document.getElementById("dropdown");
+    if (dropdown.style.display === "block") {
+        dropdown.style.display = "none";
+    } else {
+        dropdown.style.display = "block";
+    }
+}
+window.toggleDropdown = toggleDropdown;
 document.addEventListener('DOMContentLoaded', async () => {
 
     const gameModal = document.getElementById('gameModal');
@@ -8,6 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tryAgainBtn = document.getElementById('tryAgainBtn');
     const continueBtn = document.getElementById('continueBtn');
     const debug = false;
+    let keyColours = Array(26).fill(-1);
     const ROWS = 6;
     const COLUMNS = 5;
     const answerList = '../assets/possibleAnswers.txt';
@@ -27,6 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const answerlist = await fetchWordList(answerList);
     const guesslist = await fetchWordList(guessList);
     const gamelogic = new GameLogic(ROWS,COLUMNS,answerList,guessList,secondGuessesList);
+    const colourCodes = ['lightgrey','grey','#C9B458','#6AAA64'];
     let answer = getRandomString(answerlist);
     
     const titleLabel1 = document.getElementById('titleLabel1');
@@ -34,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const titleLabe2 = document.getElementById('titleLabel2');
     const gridPane2 = document.getElementById('gridPane2');
-
+    const titleLabel = document.getElementById('titleLabel');
     // Initialize the worker
     let worker= null; 
 
@@ -68,17 +78,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    function updateTitleText1(newText) {
-        titleLabel1.textContent = newText;
+    function updateTitleText(newText) {
+        titleLabel.textContent = newText;
     }
-    function updateTitleText2(newText) {
-        titleLabel2.textContent = newText;
-    }
+    
 
 
+    window.onclick = function(event) {
+        if (!event.target.matches('.menu-button')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.style.display === "block") {
+                    openDropdown.style.display = "none";
+                }
+            }
+        }
+    }
 
     function manageCalculationThread() {
-        updateTitleText2("I'm thinking...");
+        updateTitleText("Computer thinking");
         // Send data to the worker
         calculating = true;
         if (worker) {
@@ -93,7 +112,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (result == 'solved'){
                 computerSolved=lastActivatedRow+1;
             }else{
-                updateTitleText2("ready to move!")
+                updateTitleText("Make your guess")
             }
            calculating = false;
         };
@@ -117,6 +136,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if(playerSolved || guesslist.includes(characters1[lastActivatedRow+1].join(''))){
                 currentColumn = 0;
                 lastActivatedRow++;
+                updateKeyColors();
                 if(characters1[lastActivatedRow].join('') == answer && !playerSolved){ playerSolved =1+lastActivatedRow;updateColours1(lastActivatedRow);}
                 if(characters2[lastActivatedRow].join('') == answer && !computerSolved){computerSolved =1+ lastActivatedRow;updateColours2(lastActivatedRow);}
                 if (!playerSolved && !computerSolved){
@@ -141,7 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     else
                     {
                         updateColours1(lastActivatedRow);
-                        updateTitleText2("ha I win!")
+                        updateTitleText("ha I win!")
                     }
                 }
                 else if (computerSolved && playerSolved){
@@ -168,44 +188,61 @@ document.addEventListener('DOMContentLoaded', async () => {
     function updateColours1(row) {
         clickCounts1[row] = gamelogic.getColours(characters1[row].join(''), answer);
         
-    
+       
         for (let col = 0; col < clickCounts1[row].length; col++) {
+            buttons1[lastActivatedRow][col].style.color = 'white';
+            buttons1[lastActivatedRow][col].style.border = '0px';
             if (clickCounts1[row][col] === 0) {
-                buttons1[row][col].style.backgroundColor = 'grey';
+                buttons1[row][col].style.backgroundColor = colourCodes[1];
             } else if (clickCounts1[row][col] === 1) {
-                buttons1[row][col].style.backgroundColor = 'yellow';
+                buttons1[row][col].style.backgroundColor = colourCodes[2];
             } else if (clickCounts1[row][col] === 2) {
-                buttons1[row][col].style.backgroundColor = 'green';
+                buttons1[row][col].style.backgroundColor = colourCodes[3];
             }
     
         }
     }
     function updateColours2(row) {
         clickCounts2[row] = gamelogic.getColours(characters2[row].join(''), answer);
-        
+       
         for (let col = 0; col < clickCounts1[row].length; col++) {
+            buttons2[lastActivatedRow][col].style.color = 'white';
+            buttons2[lastActivatedRow][col].style.border = '0px';
             if (clickCounts2[row][col] === 0) {
-                buttons2[row][col].style.backgroundColor = 'grey';
+                buttons2[row][col].style.backgroundColor = colourCodes[1];
             } else if (clickCounts2[row][col] === 1) {
-                buttons2[row][col].style.backgroundColor = 'yellow';
+                buttons2[row][col].style.backgroundColor = colourCodes[2];
             } else if (clickCounts2[row][col] === 2) {
-                buttons2[row][col].style.backgroundColor = 'green';
+                buttons2[row][col].style.backgroundColor = colourCodes[3];
             }
         }
     }
-    function deactivateLastRow() {
-        if (lastActivatedRow >= 0) {
-            for (let col = 0; col < COLUMNS; col++) {
-                buttons[lastActivatedRow][col].disabled = true;
-                buttons[lastActivatedRow][col].style.backgroundColor = 'white';
-                buttons[lastActivatedRow][col].textContent = '';
-                clickCounts[lastActivatedRow][col] = 0;
-            }
-            lastActivatedRow--;
-            if (lastActivatedRow >= 0) {
-                currentColumn = 0;
+    function updateKeyColors(){
+        const newKeyColours = Array(26).fill(-1);
+        for(let color = 0; color < 3; color++){
+            for(let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLUMNS; col++){
+                    let letter = characters1[row][col];
+                    if (letter.length == 0){break}
+                    let tempColour = clickCounts1[row][col] %3;
+                    let Keynumber = letter.charCodeAt(0) - 'a'.charCodeAt(0);
+                    if(tempColour == color){
+                        newKeyColours[Keynumber] = color;
+                    }
+                }
             }
         }
+        for(let i = 0; i<26; i++){
+            if (newKeyColours[i] != keyColours[i]){
+                keys[i].style.backgroundColor = colourCodes[newKeyColours[i]+1]
+                if (newKeyColours[i]==-1){
+                    keys[i].style.color = 'black';
+                }else{
+                    keys[i].style.color = 'white';
+                }
+            }
+        }
+        keyColours = [...newKeyColours]
     }
 
     function handleKeyPress(event) {
@@ -218,8 +255,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 
             } else {
                 currentColumn--;
-                buttons1[lastActivatedRow + 1][currentColumn].textContent = ' ';
-            }
+                buttons1[lastActivatedRow + 1][currentColumn].textContent = '';
+                buttons1[lastActivatedRow + 1][currentColumn].style.borderColor = 'lightgrey';
+            }   
         } else {
             const letter = event.key;
             typeLetter(letter);
@@ -229,11 +267,50 @@ document.addEventListener('DOMContentLoaded', async () => {
     function typeLetter(letter) {
         if (letter.length === 1 && /[a-zA-Z]/.test(letter) && currentColumn < COLUMNS) {
             buttons1[lastActivatedRow + 1][currentColumn].textContent = letter.toUpperCase();
-            characters1[lastActivatedRow + 1][currentColumn] = letter;
+            buttons1[lastActivatedRow + 1][currentColumn].style.borderColor = 'black';
+            characters1[lastActivatedRow + 1][currentColumn] = letter.toLowerCase();
             currentColumn++;
         }
     }
-
+    function initializeKeys() {
+        // Query all the buttons with the class 'key'
+        const keyInfo = document.querySelectorAll('#keyboard-container .key');
+        const keys = Array(26).fill(null);
+    
+        // Iterate over each button
+        keyInfo.forEach(button => {
+            const keyText = button.textContent.toLowerCase(); // Get the text and normalize it
+    
+            // Check if the button text is a single letter (ignore special keys)
+            if (keyText.length === 1 && /^[a-z]$/.test(keyText)) {
+                const index = keyText.charCodeAt(0) - 'a'.charCodeAt(0); // Calculate index (0 for 'a', 1 for 'b', etc.)
+                keys[index] = button; // Store the button in the array
+            }
+        });
+    
+        
+    
+        return keys;
+    }
+    function handleKeyClick(event) {
+        const button = event.target; // Get the clicked button element
+        const buttonText = button.textContent.trim(); // Get the text of the button
+        if (button.className==('key backspace')){
+            event.key = 'Backspace'
+            handleKeyPress(event)
+        }
+        if (buttonText=='ENTER'){
+            event.key = 'Enter';
+            handleKeyPress(event);
+        }
+        event.key = buttonText
+        // Output the text of the clicked button
+        typeLetter(buttonText)
+    
+        // You can use the buttonText variable to perform further actions
+        // For example, appending it to a display area or processing it in some way
+    }
+    
      // Function to show the modal
      function showGameModal(state, disableContinue = true) {
         // Update modal title and message based on the state
@@ -314,9 +391,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     // You can call this function wherever needed in your code
 
     document.addEventListener('keydown', handleKeyPress);
-
+    
     initializeButtons();
-    if (debug){updateTitleText1(answer)};
+    document.querySelectorAll('#keyboard-container .key').forEach(button => {
+        button.addEventListener('click', handleKeyClick);
+    });
+    if (debug){updateTitleText(answer)};
+    const keys = initializeKeys();
     manageCalculationThread();
     gridPane1.focus();
 });

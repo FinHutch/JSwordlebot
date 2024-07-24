@@ -1,49 +1,116 @@
+:root {
+    --button-size: 8vh;
+    --key-width: calc(var(--button-size) * 5 / 6);
+    --key-height: calc(var(--button-size) * 8 / 7);
+    --key-gap: 5px;
+    --bar-height: 15vh;
+    --key-bg-color: #e0e0e0;
+    --key-border-color: #ccc;
+    --key-hover-bg-color: #d0d0d0;
+    --key-active-bg-color: #c0c0c0;
+    --key-font-size: 18px;
+    --special-key-width: calc(var(--button-size) * 1.3);
+    --grid-width: calc(5 * var(--button-size) + 4 * var(--key-gap));
+    --grid-height: calc(6 * var(--button-size) + 4 * var(--key-gap));
+    --big-gap: calc((100vw - 2 * var(--grid-width)) / 3);
+    --right-big-gap: calc(var(--big-gap) + var(--grid-width));
+}
+
+/* Debugging section */
+body:before {
+    content: "big-gap: " var(--big-gap) ", right-big-gap: " var(--right-big-gap);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 5px;
+    z-index: 9999;
+}
+
+.menu-button {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
 body {
     margin: 0;
+    font-family: Arial, sans-serif;
     overflow: hidden; /* Prevent scrollbars if precise positioning pushes elements outside the viewport */
 }
 
-#game-container {
-    position: relative; /* Allows grid containers to be positioned absolutely within it */
-    width: 100vw; /* Full viewport width */
-    height: 100vh; /* Full viewport height */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    left: 10px;
+    top: 50px;
+    min-width: 160px;
 }
-
-.grid-container {
-    position: absolute; /* Allows precise positioning */
-    width: 300px; /* Adjust width as needed */
-    height: 300px; /* Adjust height as needed */
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Center content horizontally within the grid container */
-    box-sizing: border-box;
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+.top-bar {
+    text-align: center;
+    background-color: white;
+    color: black;
+    height: 10vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    border-bottom: 1px solid lightgrey;
+    z-index: 1000;
 }
 
 .grid-container-left {
-    top: 50%; /* Position the top edge of the container at the vertical center of the viewport */
-    left: 25%; /* Position the left edge of the container 25% from the left edge of the viewport */
-    transform: translate(-50%, -50%) translateY(-150px); /* Center horizontally and vertically, then move 150px up */
+    position: absolute;
+    left: var(--big-gap);
+    top: 12%;
+}
+
+#titleLabel {
+    font-size: 25px;
+    margin-bottom: 20px;
 }
 
 .grid-container-right {
-    top: 50%; /* Position the top edge of the container at the vertical center of the viewport */
-    right: 25%; /* Position the right edge of the container 25% from the right edge of the viewport */
-    transform: translate(50%, -50%) translateY(-150px); /* Center horizontally and vertically, then move 150px up */
+    position: absolute;
+    right: var(--right-big-gap);
+    top: 12%;
 }
 
 #gridPane1, #gridPane2 {
+    position: absolute;
     display: grid;
-    grid-template-columns: repeat(5, 50px);
+    grid-template-columns: repeat(5, var(--button-size));
     gap: 5px;
+    width: var(--grid-width);
 }
 
 button {
-    width: 50px;
-    height: 50px;
-    font-size: 18px;
+    width: var(--button-size);
+    height: var(--button-size);
+    color: black;
+    font-size: calc(var(--button-size) / 2);
     font-weight: bold;
     text-align: center;
+    border-style: solid;
+    border-width: 2px;
+    border-color: lightgrey;
 }
+
 .modal {
     display: none; /* Hidden by default */
     position: fixed;
@@ -53,8 +120,17 @@ button {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+#keyboard-container {
+    top: calc(12% + var(--grid-height) + 2% );
+    left: calc(var(--big-gap) - (var(--key-width)*10.9 - var(--grid-width)) / 2 );
+    position:absolute; /* Use flex for centering */
+    flex-direction: column;
+    align-items: center;
+    gap: var(--key-gap);
 }
 
 .modal-content {
@@ -64,6 +140,58 @@ button {
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */
     text-align: center;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    gap: var(--key-gap);
+}
+
+.row2 {
+    margin-left: calc(var(--key-width) / 2);
+}
+
+.row3 {
+    justify-content: space-between;
+}
+.modal-content button {
+    width: auto;
+    height: auto;
+    font-size: 16px;
+    margin: 10px;
+    padding: 10px 20px;
+}
+button.key {
+    background-color: lightgrey;
+    width: var(--key-width); /* Adjust width according to the button size variable */
+    height: var(--key-height); /* Adjust height according to the button size variable */
+    color: black;
+    font-size: calc(var(--button-size) / 2.5); /* Adjust font size based on button size */
+    font-weight: bold;
+    text-align: center;
+    border-style: solid;
+    border-width: 2px;
+    border-color: lightgrey;
+    border-radius: var(--key-gap); /* Adjust the border radius to make the corners rounded */
+    padding: 0; /* Remove padding if it's already adjusted */
+}
+
+button.backspace {
+    width: var(--special-key-width);
+    height: var(--key-height);
+    background-image: url('../assets/backspace.png'); /* Path to your icon */
+    background-size: calc(var(--button-size) / 1.5);
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+button.enter {
+    width: calc(var(--button-size) * 1.3);
+    font-size: calc(var(--button-size) / 3.5);
 }
 
 .modal-content button {
