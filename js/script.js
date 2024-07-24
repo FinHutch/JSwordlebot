@@ -113,7 +113,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             characters,
             clickCounts,
             lastActivatedRow,
-            bigPool: false
+            bigPool: false,
+            randGuess: false,
         };
         worker.postMessage(data);
     }

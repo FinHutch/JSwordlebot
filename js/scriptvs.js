@@ -125,7 +125,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             characters: characters2,
             clickCounts: clickCounts2,
             lastActivatedRow,
-            bigPool: false
+            bigPool: false,
+            randGuess: true
         };
         worker.postMessage(data);
     }
@@ -177,8 +178,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 
                 if (lastActivatedRow == ROWS -1 &&calculating == false){
+                    showComputerLetters();
                     if (playerSolved ==computerSolved){showGameModal('tie');}
-                    else if (!playerSolved){showGameModal('fail')}
+                    else if (!playerSolved){showGameModal('fail',true)}
                     else {showGameModal('win');}
                 } 
             }
@@ -312,12 +314,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
      // Function to show the modal
-     function showGameModal(state, disableContinue = true) {
+     function showGameModal(state, disableContinue = false) {
         // Update modal title and message based on the state
         switch(state) {
             case 'fail':
-                modalTitle.innerText = 'Epic Fail!';
-                modalMessage.innerText = 'Would you like to try again or continue?';
+                if (!disableContinue){
+                    modalTitle.innerText = 'Epic Fail!';
+                    modalMessage.innerText = 'Would you like to try again or continue? (continue to see computers guesses)';
+                }
+                else{
+                    modalMessage.innerText = 'Oh No! Try again?';
+                }
                 break;
             case 'win':
                 modalTitle.innerText = 'You Win!';

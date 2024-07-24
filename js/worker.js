@@ -8,7 +8,7 @@ let abortController = null;
 self.onmessage = async function(event) {
     // Create a new AbortController for this computation
     try {
-        const { rows, columns, answerList, guessList, secondGuessesList, characters, clickCounts, lastActivatedRow, bigPool } = event.data;
+        const { rows, columns, answerList, guessList, secondGuessesList, characters, clickCounts, lastActivatedRow, bigPool, randGuess } = event.data;
 
         // Initialize GameLogic instance if it doesn't exist
         if (!gameLogicInstance) {
@@ -17,7 +17,7 @@ self.onmessage = async function(event) {
         }
 
         // Perform heavy computation (gameLogicInstance.calculate)
-        const result = await gameLogicInstance.calculate(characters, clickCounts, lastActivatedRow, bigPool);
+        const result = await gameLogicInstance.calculate(characters, clickCounts, lastActivatedRow, bigPool,randGuess);
         console.log('Worker calculated result:', result);
         self.postMessage(result);
     } catch (error) {

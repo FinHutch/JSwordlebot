@@ -16,6 +16,7 @@ export class GameLogic {
         this.guessListPromise = fetchWordList(guessList);
         this.letterInfoList = [];
         this.bestSecondGuesses = fetchGuessesList(secondGuessesList);
+        this.bestFirstGuesses = ['crane','slate','trace','crate','caret','carte','plate','stare']
     }
 
     async initialize() {
@@ -24,13 +25,18 @@ export class GameLogic {
         this.secondGuesses = await this.bestSecondGuesses;
     }
 
-    async calculate(characters, clickCounts, lastActivatedRow, bigPool = false, store = false) {
+    async calculate(characters, clickCounts, lastActivatedRow, bigPool = false, randomStartingGuess = false) {
         await this. initialize(); // Ensure the lists are fully loaded before calculation
 
         let allLetterInfo = this.addRowInformation(characters, clickCounts, lastActivatedRow, bigPool);
 
         if (lastActivatedRow === -1) {
-            return "crate";
+            if (randomStartingGuess){
+                
+                return this.bestFirstGuesses[Math.floor(Math.random() * this.bestFirstGuesses.length)];
+            }else{
+                return "crate";
+            }
         } else if (lastActivatedRow === 0) {
             let firstGuess = characters[0].join('');
             let colours = this.getModulo3List(clickCounts[0]);
