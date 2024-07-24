@@ -7,18 +7,58 @@
     <link rel="stylesheet" href="css/styles1.css">
 </head>
 <body>
-
-    <div id="game-container">
-        <div class="grid-container grid-container-left">
-            <h1 id="titleLabel1">Tile Game - Grid 1</h1>
-            <div id="gridPane1"></div>
+    <div class="top-bar">
+        <button class="menu-button" onclick="toggleDropdown()">☰</button>
+        <div id="dropdown" class="dropdown-content">
+            <a href="game1.html">Worlde solver</a>
+            <a href="game2.html">beat the bot</a>
+            <a href="game3.html">Regular wordle</a>
         </div>
-        <div class="grid-container grid-container-right">
-            <h1 id="titleLabel2">Tile Game - Grid 2</h1>
-            <div id="gridPane2"></div>
-        </div>
+        <h1 id="titleLabel">Wordle Bot</h1>
     </div>
 
+    <div class="grid-container grid-container-left">
+        <div id="gridPane1"></div>
+    </div>
+    <div class="grid-container grid-container-right">
+        <div id="gridPane2"></div>
+    </div>
+    <div id="keyboard-container">
+        <div class="row row1">
+            <button class="key">Q</button>
+            <button class="key">W</button>
+            <button class="key">E</button>
+            <button class="key">R</button>
+            <button class="key">T</button>
+            <button class="key">Y</button>
+            <button class="key">U</button>
+            <button class="key">I</button>
+            <button class="key">O</button>
+            <button class="key">P</button>
+        </div>
+        <div class="row row2">
+            <button class="key">A</button>
+            <button class="key">S</button>
+            <button class="key">D</button>
+            <button class="key">F</button>
+            <button class="key">G</button>
+            <button class="key">H</button>
+            <button class="key">J</button>
+            <button class="key">K</button>
+            <button class="key">L</button>
+        </div>
+        <div class="row row3">
+            <button class="key enter">ENTER</button>
+            <button class="key">Z</button>
+            <button class="key">X</button>
+            <button class="key">C</button>
+            <button class="key">V</button>
+            <button class="key">B</button>
+            <button class="key">N</button>
+            <button class="key">M</button>
+            <button class="key backspace"></button>
+        </div>
+    </div>
 
     <div id="gameModal" class="modal">
         <div class="modal-content">
