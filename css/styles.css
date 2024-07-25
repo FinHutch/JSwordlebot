@@ -12,6 +12,7 @@
     --special-key-width: calc(var(--button-size) * 1.3);
     --grid-width: calc(5 * var(--button-size) + 4 * calc(var(--button-size) / 10));
     --grid-height: calc(6 * var(--button-size) + 4 * calc(var(--button-size) / 10));
+    --title-font-size: 4vh; /* Default title font size */
 }
 
 .menu-button {
@@ -42,14 +43,14 @@ button:focus {
 }
 
 #modalGif {
-    max-width: 25%;
-    height: auto;
+    max-height: 35vh;
+    width: auto;
     margin: 20px 0; /* Add margin if needed */
 }
 
 .top-bar {
     display: flex;
-    text-align: center;
+    align-items: center; /* Center vertically */
     justify-content: center;
     background-color: white;
     color: black;
@@ -60,6 +61,13 @@ button:focus {
     width: 100%;
     border-bottom: 1px solid lightgrey;
     z-index: 1000;
+}
+
+#titleLabel {
+    font-size: var(--title-font-size);
+    margin: 0; /* Remove default margin */
+    flex: 1; /* Take up the available space */
+    text-align: center; /* Center text within the label */
 }
 
 body {
@@ -104,11 +112,6 @@ body {
 
 .row3 {
     justify-content: space-between;
-}
-
-#titleLabel {
-    font-size: 25px;
-    margin-bottom: 20px;
 }
 
 button.key {
@@ -193,4 +196,57 @@ button {
     font-size: 16px;
     margin: 10px;
     padding: 10px 20px;
+}
+
+@media (max-aspect-ratio: 5/6) {
+    :root {
+        --key-width: calc(8vw);
+        --key-height: calc(var(--button-size) * 8 / 7);
+        --key-gap: calc(var(--button-size) / 10);
+        --bar-height: 15vh;
+        --key-bg-color: #e0e0e0;
+        --key-border-color: #ccc;
+        --key-hover-bg-color: #d0d0d0;
+        --key-active-bg-color: #c0c0c0;
+        --key-font-size: 18px;
+        --special-key-width: calc(var(--key-width) * 39 / 25);
+        --grid-width: calc(5 * var(--button-size) + 4 * calc(var(--button-size) / 10));
+        --grid-height: calc(6 * var(--button-size) + 4 * calc(var(--button-size) / 10));
+    }
+    #titleLabel {
+        font-size: 8vw;
+    }
+}
+
+@media (max-aspect-ratio: 1/2) {
+    :root {
+        --button-size: 15vw;
+        --key-width: calc(8vw);
+        --key-height: calc(var(--button-size) * 1.4);
+        --key-gap: calc(var(--button-size) / 10);
+        --bar-height: 15vh;
+        --key-bg-color: #e0e0e0;
+        --key-border-color: #ccc;
+        --key-hover-bg-color: #d0d0d0;
+        --key-active-bg-color: #c0c0c0;
+        --key-font-size: 18px;
+        --special-key-width: calc(var(--key-width) * 39 / 25);
+        --grid-width: calc(5 * var(--button-size) + 4 * calc(var(--button-size) / 10));
+        --grid-height: calc(6 * var(--button-size) + 4 * calc(var(--button-size) / 10));
+    }
+    #game-container {
+        justify-content: center; /* Center horizontally */
+        text-align: center;
+        display: flex;
+        margin-top: 15vh; /* Margin to push content below the top bar */
+        width: 100%;
+        height: auto;
+    }
+    #keyboard-container {
+        margin-top: 3vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--key-gap);
+    }
 }

@@ -201,3 +201,6 @@ button.enter {
     margin: 10px;
     padding: 10px 20px;
 }
+@media (max-aspect-ratio: 1/1) {
+    
+}
