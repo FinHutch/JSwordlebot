@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if(playerSolved || guesslist.includes(characters1[lastActivatedRow+1].join(''))){
                 currentColumn = 0;
                 lastActivatedRow++;
-                updateKeyColors();
+                
                 if(characters1[lastActivatedRow].join('') == answer && !playerSolved){ playerSolved =1+lastActivatedRow;updateColours1(lastActivatedRow);}
                 if(characters2[lastActivatedRow].join('') == answer && !computerSolved){computerSolved =1+ lastActivatedRow;updateColours2(lastActivatedRow);}
                 if (!playerSolved && !computerSolved){
@@ -185,6 +185,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 } 
             }
         }
+        updateKeyColors();
     }
     
     function updateColours1(row) {

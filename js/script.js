@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function activateNextRow() {
         if (lastActivatedRow < ROWS - 1 && currentColumn === COLUMNS) {
             if(guesslist.includes(characters[lastActivatedRow+1].join(''))){
-                updateKeyColors();
+                
                 currentColumn = 0;
                 lastActivatedRow++;
                 for (let col = 0; col < COLUMNS; col++) {
@@ -139,6 +139,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
         }
+        updateKeyColors();
     }
     function updateKeyColors(){
         const newKeyColours = Array(26).fill(-1);

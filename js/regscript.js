@@ -65,7 +65,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     function activateNextRow() {
         
         if (lastActivatedRow < ROWS - 1) {
+            
             if(guesslist.includes(characters[lastActivatedRow+1].join(''))){
+                
                 currentColumn = 0;
                 lastActivatedRow++;
                 if(characters[lastActivatedRow].join('') == answer){ playerSolved =1+lastActivatedRow;updateColours(lastActivatedRow);}
@@ -82,17 +84,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         
                     } 
                     
-                    return
+                    
                 } 
                 
                 else if (playerSolved){
                     showGameModal("win");
-                    return
+                    
                 }
                 
                 
             }
         }
+        updateKeyColors();
         
     }
     
@@ -155,7 +158,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Query all the buttons with the class 'key'
         const keyInfo = document.querySelectorAll('#keyboard-container .key');
         const keys = Array(26).fill(null);
-    
         // Iterate over each button
         keyInfo.forEach(button => {
             const keyText = button.textContent.toLowerCase(); // Get the text and normalize it
@@ -190,6 +192,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     
         // You can use the buttonText variable to perform further actions
         // For example, appending it to a display area or processing it in some way
+    }
+    function updateKeyColors(){
+        const newKeyColours = Array(26).fill(-1);
+        for(let color = 0; color < 3; color++){
+            for(let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLUMNS; col++){
+                    let letter = characters[row][col];
+                    if (letter.length == 0){break}
+                    let tempColour = clickCounts[row][col] %3;
+                    let Keynumber = letter.charCodeAt(0) - 'a'.charCodeAt(0);
+                    if(tempColour == color){
+                        newKeyColours[Keynumber] = color;
+                    }
+                }
+            }
+        }
+        for(let i = 0; i<26; i++){
+            if (newKeyColours[i] != keyColours[i]){
+                keys[i].style.backgroundColor = colourCodes[newKeyColours[i]+1]
+                if (newKeyColours[i]==-1){
+                    keys[i].style.color = 'black';
+                }else{
+                    keys[i].style.color = 'white';
+                }
+            }
+        }
+        keyColours = [...newKeyColours]
     }
      function showGameModal(state, disableContinue = true) {
         // Update modal title and message based on the state
