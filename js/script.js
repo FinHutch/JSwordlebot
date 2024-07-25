@@ -10,6 +10,12 @@ export function toggleDropdown() {
 window.toggleDropdown = toggleDropdown;
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("hello");
+    const gameModal = document.getElementById('gameModal');
+    const modalGif = document.getElementById('modalGif');
+    modalGif.style.display = 'block';
+    gameModal.style.display = 'block';
+
+    const continueBtn = document.getElementById('continueBtn');
     const ROWS = 6;
     const COLUMNS = 5;
     const answerList = '../assets/possibleAnswers.txt';
@@ -181,8 +187,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function handleKeyPress(event) {
+        event.preventDefault();
         if (event.key === 'Enter') {
-            event.preventDefault();
             activateNextRow();
             manageCalculationThread();
         } else if (event.key === 'Backspace') {
@@ -230,6 +236,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     function handleKeyClick(event) {
+        event.preventDefault();
         const button = event.target; // Get the clicked button element
         const buttonText = button.textContent.trim(); // Get the text of the button
         if (button.className==('key backspace')){
@@ -253,6 +260,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const keys = initializeKeys();
     document.querySelectorAll('#keyboard-container .key').forEach(button => {
         button.addEventListener('click', handleKeyClick);
+    });
+    continueBtn.addEventListener('click', () => {
+        gameModal.style.display = 'none';
+        // Add your "continue" logic here
     });
     manageCalculationThread();
     gridPane.focus();

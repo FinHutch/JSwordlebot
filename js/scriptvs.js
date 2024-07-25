@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (result == 'solved'){
                 computerSolved=lastActivatedRow+1;
             }else{
-                updateTitleText("Make your guess")
+                updateTitleText("Can you beat the bot?")
             }
            calculating = false;
         };
