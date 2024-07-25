@@ -20,9 +20,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const ROWS = 6;
     const COLUMNS = 5;
-    const answerList = '../assets/possibleAnswers.txt';
-    const guessList = '../assets/possibleGuesses.txt';
-    const secondGuessesList = '../assets/secondGuesses.txt';
+    let URL = window.location.href;
+    URL = URL.slice(0,URL.lastIndexOf('/'));
+    const answerList = URL +'/assets/possibleAnswers.txt';
+    const guessList = URL +'/assets/possibleGuesses.txt';
+    const secondGuessesList = URL + '/assets/secondGuesses.txt';
     let buttons = [];
     let playerSolved = false;
     let clickCounts = Array.from({ length: ROWS }, () => Array(COLUMNS).fill(0));

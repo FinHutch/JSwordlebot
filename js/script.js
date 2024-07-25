@@ -18,9 +18,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const continueBtn = document.getElementById('continueBtn');
     const ROWS = 6;
     const COLUMNS = 5;
-    const answerList = '../assets/possibleAnswers.txt';
-    const guessList = '../assets/possibleGuesses.txt';
-    const secondGuessesList = '../assets/secondGuesses.txt';
+    let URL = window.location.href;
+    URL = URL.slice(0,URL.lastIndexOf('/'));
+    const answerList = URL +'/assets/possibleAnswers.txt';
+    const guessList = URL +'/assets/possibleGuesses.txt';
+    const secondGuessesList = URL + '/assets/secondGuesses.txt';
     let keyColours = Array(26).fill(-1);
     let buttons = [];
     let clickCounts = Array.from({ length: ROWS }, () => Array(COLUMNS).fill(0));
