@@ -2,30 +2,19 @@
     --button-size: 8vh;
     --key-width: calc(var(--button-size) * 5 / 6);
     --key-height: calc(var(--button-size) * 8 / 7);
-    --key-gap: 5px;
+    --key-gap: calc(var(--button-size)/10);
     --bar-height: 15vh;
-    --key-bg-color: #e0e0e0;
-    --key-border-color: #ccc;
-    --key-hover-bg-color: #d0d0d0;
-    --key-active-bg-color: #c0c0c0;
+    
     --key-font-size: 18px;
     --special-key-width: calc(var(--button-size) * 1.3);
     --grid-width: calc(5 * var(--button-size) + 4 * var(--key-gap));
     --grid-height: calc(6 * var(--button-size) + 4 * var(--key-gap));
     --big-gap: calc((100vw - 2 * var(--grid-width)) / 3);
     --right-big-gap: calc(var(--big-gap) + var(--grid-width));
+    --title-font-size: 6vh; 
 }
 
-/* Debugging section */
-body:before {
-    content: "big-gap: " var(--big-gap) ", right-big-gap: " var(--right-big-gap);
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 5px;
-    z-index: 9999;
-}
+
 
 .menu-button {
     position: absolute;
@@ -41,8 +30,7 @@ body:before {
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    overflow: hidden; /* Prevent scrollbars if precise positioning pushes elements outside the viewport */
+    font-family: Arial, sans-serif; 
 }
 
 .dropdown-content {
@@ -62,7 +50,9 @@ body {
     display: block;
 }
 .top-bar {
-    text-align: center;
+    display: flex;
+    align-items: center; /* Center vertically */
+    justify-content: center;
     background-color: white;
     color: black;
     height: 10vh;
@@ -125,7 +115,7 @@ button {
 }
 
 #keyboard-container {
-    top: calc(12% + var(--grid-height) + 2% );
+    top: calc(12vh + var(--grid-height) + 4vh );
     left: calc(var(--big-gap) - (var(--key-width)*10.9 - var(--grid-width)) / 2 );
     position:absolute; /* Use flex for centering */
     flex-direction: column;
@@ -201,6 +191,113 @@ button.enter {
     margin: 10px;
     padding: 10px 20px;
 }
-@media (max-aspect-ratio: 1/1) {
+@media (max-aspect-ratio: 3/2) {
+    :root {
+        --key-width: calc(var(--button-size) * 5 / 6);
+        --key-height: calc(var(--button-size) * 8 / 7);
+        --key-gap: calc(var(--button-size) / 10);
+        --bar-height: 15vh;
+        --key-bg-color: #e0e0e0;
+        --key-border-color: #ccc;
+        --key-hover-bg-color: #d0d0d0;
+        --key-active-bg-color: #c0c0c0;
+        --key-font-size: 18px;
+        --special-key-width: calc(var(--key-width) * 39 / 25);
+        --keyboard-width: calc(var(--key-width) * 10.9);
+        --grid-width: calc(5 * var(--button-size) + 4 * calc(var(--button-size) / 10));
+        --grid-height: calc(6 * var(--button-size) + 4 * calc(var(--button-size) / 10));
+    }
     
+    .grid-container-left {
+        position: absolute;
+        left: calc(50vw - var(--grid-width)/2);
+        top: 12vh;
+    }
+    .grid-container-right {
+        position: absolute;
+        left: calc(50vw - var(--grid-width)/2);
+        top: 100vh;
+    }
+    
+    #gridPane1, #gridPane2 {
+        position: absolute;
+        display: grid;
+        grid-template-columns: repeat(5, var(--button-size));
+        gap: calc(var(--button-size)/10);
+        width: var(--grid-width);
+    }
+    #keyboard-container {
+        top: calc(12vh + var(--grid-height) + 4vh );
+        left: calc(50vw - var(--keyboard-width) / 2);
+        position:absolute; /* Use flex for centering */
+        flex-direction: column;
+        align-items: center;
+        gap: var(--key-gap);
+    }
+}
+@media (max-aspect-ratio: 5/6) {
+    :root {
+        --key-width: calc(8vw);
+        --key-height: calc(var(--button-size) * 8 / 7);
+        --keyboard-width: calc(var(--key-width) * 10.9);
+        --key-gap: calc(var(--button-size) / 10);
+        --bar-height: 15vh;
+        --key-bg-color: #e0e0e0;
+        --key-border-color: #ccc;
+        --key-hover-bg-color: #d0d0d0;
+        --key-active-bg-color: #c0c0c0;
+        --key-font-size: 18px;
+        --special-key-width: calc(var(--key-width) * 39 / 25);
+        --grid-width: calc(5 * var(--button-size) + 4 * calc(var(--button-size) / 10));
+        --grid-height: calc(6 * var(--button-size) + 4 * calc(var(--button-size) / 10));
+    }
+    #titleLabel {
+        font-size: 8vw;
+    }
+    #keyboard-container {
+        top: calc(12vh + var(--grid-height) + 4vh );
+        left: 0;
+        position:absolute; /* Use flex for centering */
+        flex-direction: column;
+        align-items: center;
+        gap: var(--key-gap);
+    }
+}
+
+@media (max-aspect-ratio: 1/2) {
+    :root {
+        --button-size: 15vw;
+        --key-width: calc(8vw);
+        --key-height: calc(var(--button-size) * 1.4);
+        --key-gap: calc(var(--button-size) / 10);
+        --bar-height: 15vh;
+        --key-bg-color: #e0e0e0;
+        --key-border-color: #ccc;
+        --key-hover-bg-color: #d0d0d0;
+        --key-active-bg-color: #c0c0c0;
+        --key-font-size: 18px;
+        --special-key-width: calc(var(--key-width) * 39 / 25);
+        --grid-width: calc(5 * var(--button-size) + 4 * calc(var(--button-size) / 10));
+        --grid-height: calc(6 * var(--button-size) + 4 * calc(var(--button-size) / 10));
+    }
+    #game-container {
+        justify-content: center; /* Center horizontally */
+        text-align: center;
+        display: flex;
+        margin-top: 15vh; /* Margin to push content below the top bar */
+        width: 100%;
+        height: auto;
+    }
+    #keyboard-container {
+        margin-top: 3vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--key-gap);
+    }
+    .grid-container-right {
+        position: absolute;
+        left: calc(50vw - var(--grid-width)/2);
+        top: calc(var(--button-size)*6.6 + var(--key-height)*3 + 20vh);
+    }
 }
