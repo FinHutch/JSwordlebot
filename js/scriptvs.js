@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modalMessage = document.getElementById('modalMessage');
     const tryAgainBtn = document.getElementById('tryAgainBtn');
     const continueBtn = document.getElementById('continueBtn');
-    const debug = false;
+    const debug = true;
     let keyColours = Array(26).fill(-1);
     const ROWS = 6;
     const COLUMNS = 5;
@@ -162,30 +162,32 @@ document.addEventListener('DOMContentLoaded', async () => {
                     else
                     {
                         updateColours1(lastActivatedRow);
-                        updateTitleText("ha I win!")
+                        updateTitleText("Loser!!")
                     }
                 }
                 else if (computerSolved && playerSolved){
                     showComputerLetters();
                     if (computerSolved==playerSolved){
-                    updateTitleText2("it's a tie")}
+                    updateTitleText("it's a tie")}
                     else if (computerSolved>playerSolved){
-                        showGameModal("win");
+                        showGameModal("win",true);
                     }else{
-                        showGameModal("fail",false);
+                        showGameModal("At least you got it",true, "You got the word... but the computer beat you to it. Try again?");
                     }
     
                 }
                 
                 if (lastActivatedRow == ROWS -1 &&calculating == false){
                     showComputerLetters();
-                    if (playerSolved ==computerSolved){showGameModal('tie');}
-                    else if (!playerSolved){showGameModal('fail',true)}
-                    else {showGameModal('win');}
+                    if (playerSolved ==computerSolved){showGameModal('It\'s a tie!',true, 'You both got it on the last guess. Poor from both of you.');}
+                    else if (!playerSolved && computerSolved){showGameModal('fail',true)}
+                    else if(playerSolved && !computerSolved){showGameModal("You win!",true, "Wow! you beat the computer on the lsat guess");}
+                    else {showGameModal("you Lose", true, " you both didn't get the word, but I'm not counting that as a win. The word was " + answer)}
                 } 
+                updateKeyColors();
             }
         }
-        updateKeyColors();
+        
     }
     
     function updateColours1(row) {
@@ -315,7 +317,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
      // Function to show the modal
-     function showGameModal(state, disableContinue = false) {
+     function showGameModal(state, disableContinue = false,state2 = '') {
         // Update modal title and message based on the state
         switch(state) {
             case 'fail':
@@ -335,6 +337,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 modalTitle.innerText = 'It\'s a Tie!';
                 modalMessage.innerText = 'Would you like to try again?';
                 break;
+            default:
+                modalTitle.innerText = state;
+                modalMessage.innerText = state2;
         }
     
         // Remove or show the "Continue" button based on disableContinue
@@ -404,7 +409,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelectorAll('#keyboard-container .key').forEach(button => {
         button.addEventListener('click', handleKeyClick);
     });
-    if (debug){updateTitleText(answer)};
+    if (debug){console.log(answer)};
     const keys = initializeKeys();
     manageCalculationThread();
     gridPane1.focus();

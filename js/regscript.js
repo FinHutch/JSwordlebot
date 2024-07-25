@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (!playerSolved){
                     updateColours(lastActivatedRow);
                     if (lastActivatedRow == ROWS -1 ){
-                        showGameModal("fail");
+                        showGameModal("You Failed :(",true, "would you like to try again?");
         
                     } 
                     
@@ -88,14 +88,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 } 
                 
                 else if (playerSolved){
-                    showGameModal("win");
+                    updateColours(lastActivatedRow);
+                    showGameModal("win",true);
                     
                 }
                 
-                
+                updateKeyColors();
             }
         }
-        updateKeyColors();
+        
         
     }
     
@@ -220,12 +221,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         keyColours = [...newKeyColours]
     }
-     function showGameModal(state, disableContinue = true) {
+    function showGameModal(state, disableContinue = false,state2 = '') {
         // Update modal title and message based on the state
         switch(state) {
             case 'fail':
-                modalTitle.innerText = 'Epic Fail!';
-                modalMessage.innerText = 'Would you like to try again or continue?';
+                if (!disableContinue){
+                    modalTitle.innerText = 'Epic Fail!';
+                    modalMessage.innerText = 'Would you like to try again or continue? (continue to see computers guesses)';
+                }
+                else{
+                    modalMessage.innerText = 'Oh No! Try again?';
+                }
                 break;
             case 'win':
                 modalTitle.innerText = 'You Win!';
@@ -235,6 +241,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 modalTitle.innerText = 'It\'s a Tie!';
                 modalMessage.innerText = 'Would you like to try again?';
                 break;
+            default:
+                modalTitle.innerText = state;
+                modalMessage.innerText = state2;
         }
     
         // Remove or show the "Continue" button based on disableContinue

@@ -137,9 +137,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     buttons[lastActivatedRow][col].style.color = 'white';
                     buttons[lastActivatedRow][col].style.border = '0px';
                 }
+                updateKeyColors();
             }
         }
-        updateKeyColors();
+        
     }
     function updateKeyColors(){
         const newKeyColours = Array(26).fill(-1);
