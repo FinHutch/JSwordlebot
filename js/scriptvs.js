@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modalMessage = document.getElementById('modalMessage');
     const tryAgainBtn = document.getElementById('tryAgainBtn');
     const continueBtn = document.getElementById('continueBtn');
+    showGameModal('VS mode', false,'Can you beat the bot? Scroll down to see the bots moves, you\'ll have to get lucky!',true);
     const debug = true;
     let keyColours = Array(26).fill(-1);
     const ROWS = 6;
@@ -317,7 +318,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
      // Function to show the modal
-     function showGameModal(state, disableContinue = false,state2 = '') {
+     function showGameModal(state, disableContinue = false,state2 = '',disableTryAgain = false) {
         // Update modal title and message based on the state
         switch(state) {
             case 'fail':
@@ -343,6 +344,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     
         // Remove or show the "Continue" button based on disableContinue
+        if (disableTryAgain) {
+            if (tryAgainBtn.parentElement) {
+                tryAgainBtn.parentElement.removeChild(tryAgainBtn); // Remove the button from the DOM
+            }
+        } else {
+            // If continue button is removed and should be added back
+            if (!document.getElementById('tryAgainBtn')) {
+                // Assuming you want to re-add the button, adjust as needed
+                gameModal.appendChild(tryAgainBtn);
+            }
+            continueBtn.style.display = 'inline-block'; // Make sure it is visible
+        }
         if (disableContinue) {
             if (continueBtn.parentElement) {
                 continueBtn.parentElement.removeChild(continueBtn); // Remove the button from the DOM
