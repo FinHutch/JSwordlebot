@@ -364,13 +364,19 @@ export async function fetchWordList(fileName) {
             throw new Error('Failed to fetch');
         }
         const data = await response.text(); // Wait for the text data from the response
-        const wordList = data.trim().split('\r\n');
+        
+        // Use a regular expression to keep only alphanumeric words
+        const wordList = data
+            .split(/\s+/) // Split the text into words based on whitespace (including \r\n, \n, and spaces)
+            .filter(word => /^[a-zA-Z0-9]+$/.test(word)); // Keep only alphanumeric words
+        
         return wordList;
     } catch (error) {
         console.error('Error fetching the file:', error);
         return []; // Return an empty array in case of error
     }
 }
+
 export async function fetchGuessesList(fileName) {
     try {
         const response = await fetch(fileName); // Wait for the fetch operation to complete
