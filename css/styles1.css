@@ -13,9 +13,13 @@
     --right-big-gap: calc(var(--big-gap) + var(--grid-width));
     --title-font-size: 6vh; 
 }
+html, body {
+    touch-action: manipulation;
+}
 
-
-
+* {
+    -webkit-tap-highlight-color: transparent;
+}
 .menu-button {
     position: absolute;
     left: 0;
@@ -26,6 +30,21 @@
     padding: 10px;
     font-size: 16px;
     cursor: pointer;
+}
+.retry-button{
+    position: absolute;
+    top: 8px;
+    background-color: white;
+    border-color: white;
+    left: 40px;
+    width: 15px;
+    height: 15px;
+    
+}
+.retry-button img.retry-icon {
+    width: 15px;  /* Adjust the icon width as needed */
+    height: 15px; /* Adjust the icon height as needed */
+    object-fit: contain;
 }
 
 body {

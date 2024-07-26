@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 else if (computerSolved && !playerSolved){
                     if (computerSolved==lastActivatedRow+1){
-                        showGameModal('fail',false)
+                        showGameModal('You Failed!',false,'complete the wordle to view comptuers guesses')
                         updateColours1(lastActivatedRow);
                     }
                     else
@@ -173,19 +173,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (computerSolved==playerSolved){
                     updateTitleText("it's a tie")}
                     else if (computerSolved>playerSolved){
-                        showGameModal("win",true);
+                        showGameModal("You Win!!!", false, "Well done, that's no easy task. Check out the other game modes in the menu.");
                     }else{
-                        showGameModal("At least you got it",true, "You got the word... but the computer beat you to it. Try again?");
+                        showGameModal("At least you got it",true, "You got the word... but the computer beat you to it. Try out the other game modes in the menu");
                     }
     
                 }
                 
                 if (lastActivatedRow == ROWS -1 &&calculating == false){
                     showComputerLetters();
-                    if (playerSolved ==computerSolved){showGameModal('It\'s a tie!',true, 'You both got it on the last guess. Poor from both of you.');}
-                    else if (!playerSolved && computerSolved){showGameModal('fail',true)}
-                    else if(playerSolved && !computerSolved){showGameModal("You win!",true, "Wow! you beat the computer on the lsat guess");}
-                    else {showGameModal("you Lose", true, " you both didn't get the word, but I'm not counting that as a win. The word was " + answer)}
+                    if (playerSolved ==computerSolved){showGameModal('It\'s a tie!',false, 'You both got it on the last guess. Poor from both of you.');}
+                    else if (!playerSolved && computerSolved){showGameModal('You failed',false,':( refresh to try again, or check out the other game modes in the menu')}
+                    else if(playerSolved && !computerSolved){showGameModal("You win!",false, "Wow! you beat the computer on the lsat guess!");}
+                    else {showGameModal("you Lose", false, " you both didn't get the word, but I'm not counting that as a win. The word was " + answer)}
                 } 
                 updateKeyColors();
             }
@@ -320,30 +320,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
      // Function to show the modal
-     function showGameModal(state, disableContinue = false,state2 = '',disableTryAgain = false) {
+     function showGameModal(state, disableContinue = false,state2 = '',disableTryAgain = true) {
         // Update modal title and message based on the state
-        switch(state) {
-            case 'fail':
-                if (!disableContinue){
-                    modalTitle.innerText = 'Epic Fail!';
-                    modalMessage.innerText = 'Would you like to try again or continue? (continue to see computers guesses)';
-                }
-                else{
-                    modalMessage.innerText = 'Oh No! Try again?';
-                }
-                break;
-            case 'win':
-                modalTitle.innerText = 'You Win!';
-                modalMessage.innerText = 'Would you like to try again?';
-                break;
-            case 'tie':
-                modalTitle.innerText = 'It\'s a Tie!';
-                modalMessage.innerText = 'Would you like to try again?';
-                break;
-            default:
-                modalTitle.innerText = state;
-                modalMessage.innerText = state2;
-        }
+            modalTitle.innerText = state;
+            modalMessage.innerText = state2;
+        
     
         // Remove or show the "Continue" button based on disableContinue
         if (disableTryAgain) {
@@ -356,7 +337,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Assuming you want to re-add the button, adjust as needed
                 gameModal.appendChild(tryAgainBtn);
             }
-            continueBtn.style.display = 'inline-block'; // Make sure it is visible
+            tryAgainBtn.style.display = 'inline-block'; // Make sure it is visible
         }
         if (disableContinue) {
             if (continueBtn.parentElement) {

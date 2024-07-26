@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tile Game</title>
+    <title>Wordle Game</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <div class="top-bar">
         <button class="menu-button" onclick="toggleDropdown()">☰</button>
+        <button class="retry-button" onclick="window.location.reload()">
+            <img src="./assets/retry.png" alt="Retry Icon" class="retry-icon">
+        </button>
         <div id="dropdown" class="dropdown-content">
             <a href="game1.html">Wordle solver</a>
             <a href="game2.html">beat the bot</a>

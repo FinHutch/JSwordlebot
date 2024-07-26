@@ -23,7 +23,9 @@
     font-size: 16px;
     cursor: pointer;
 }
-
+* {
+    -webkit-tap-highlight-color: transparent;
+}
 .dropdown-content {
     display: none;
     position: absolute;
@@ -34,7 +36,24 @@
     top: 50px;
     min-width: 160px;
 }
-
+.retry-button{
+    position: absolute;
+    top: 8px;
+    background-color: white;
+    border-color: white;
+    left: 40px;
+    width: 15px;
+    height: 15px;
+    
+}
+html, body {
+    touch-action: manipulation;
+}
+.retry-button img.retry-icon {
+    width: 15px;  /* Adjust the icon width as needed */
+    height: 15px; /* Adjust the icon height as needed */
+    object-fit: contain;
+}
 button:focus {
     outline: none; /* Remove default outline */
 }
