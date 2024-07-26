@@ -33,10 +33,10 @@ html, body {
 }
 .retry-button{
     position: absolute;
-    top: 8px;
+    top: 10px;
     background-color: white;
     border-color: white;
-    left: 40px;
+    right: 20px;
     width: 15px;
     height: 15px;
     
