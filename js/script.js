@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const ROWS = 6;
     const COLUMNS = 5;
     let URL = window.location.href;
-    URL = URL.slice(0,URL.lastIndexOf('/'));
+    URL = URL.slice(0,URL.lastIndexOf('/'));    // this is becasue github pages handles file references wierdly
     const answerList = URL +'/assets/possibleAnswers.txt';
     const guessList = URL +'/assets/possibleGuesses.txt';
     const secondGuessesList = URL + '/assets/secondGuesses.txt';
@@ -35,10 +35,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const titleLabel = document.getElementById('titleLabel');
     const gridPane = document.getElementById('gridPane');
 
-    // Initialize the worker
     let worker= null; 
 
-    // Handle messages from the worker
     
     function terminateWorker() {
         if (worker) {
@@ -50,6 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     function initializeButtons() {
+        //initialzes buttons
         for (let row = 0; row < ROWS; row++) {
             buttons[row] = [];
             for (let col = 0; col < COLUMNS; col++) {
@@ -68,6 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function handleTileClick(button, row, col) {
+        //handles clicks on the tiles that changes their colour
         clickCounts[row][col]++;
         updateKeyColors();
         manageCalculationThread();
@@ -85,6 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     window.onclick = function(event) {
+        // means you c an click outside of the menu button to disable it.
         if (!event.target.matches('.menu-button')) {
             var dropdowns = document.getElementsByClassName("dropdown-content");
             for (var i = 0; i < dropdowns.length; i++) {
@@ -96,8 +97,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     function manageCalculationThread() {
+        // calculates the next best guess in a seperate thread
         updateTitleText('Thinking...');
-        // Send data to the worker
+        
         if (worker) {
             worker.terminate();
             worker = null;
@@ -128,6 +130,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function activateNextRow() {
+        //activates the next row
         if (lastActivatedRow < ROWS - 1 && currentColumn === COLUMNS) {
             if(guesslist.includes(characters[lastActivatedRow+1].join(''))){
                 
@@ -145,6 +148,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
     }
     function updateKeyColors(){
+        //updates the keyboard colours like the real wordle game
         const newKeyColours = Array(26).fill(-1);
         for(let color = 0; color < 3; color++){
             for(let row = 0; row < ROWS; row++) {
@@ -172,6 +176,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         keyColours = [...newKeyColours]
     }
     function deactivateLastRow() {
+        // deletes the last row
             if (lastActivatedRow >= 0) {
                
             for (let col = 0; col < COLUMNS; col++) {
@@ -191,6 +196,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function handleKeyPress(event) {
+        //handles key presses
         event.preventDefault();
         if (event.key === 'Enter') {
             activateNextRow();
@@ -211,6 +217,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function typeLetter(letter) {
+        // types letters in the boxes
         if (letter.length === 1 && /[a-zA-Z]/.test(letter) && currentColumn < COLUMNS) {
             buttons[lastActivatedRow + 1][currentColumn].textContent = letter.toUpperCase();
             buttons[lastActivatedRow + 1][currentColumn].style.borderColor = 'black';
@@ -219,18 +226,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     function initializeKeys() {
-        // Query all the buttons with the class 'key'
+        // Query all the 'key' buttons
         const keyInfo = document.querySelectorAll('#keyboard-container .key');
         const keys = Array(26).fill(null);
     
-        // Iterate over each button
+        
         keyInfo.forEach(button => {
             const keyText = button.textContent.toLowerCase(); // Get the text and normalize it
     
-            // Check if the button text is a single letter (ignore special keys)
+            
             if (keyText.length === 1 && /^[a-z]$/.test(keyText)) {
                 const index = keyText.charCodeAt(0) - 'a'.charCodeAt(0); // Calculate index (0 for 'a', 1 for 'b', etc.)
-                keys[index] = button; // Store the button in the array
+                keys[index] = button; 
             }
         });
     
@@ -240,9 +247,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     function handleKeyClick(event) {
+        // handles clicks of the keyboard
         event.preventDefault();
-        const button = event.target; // Get the clicked button element
-        const buttonText = button.textContent.trim(); // Get the text of the button
+        const button = event.target; 
+        const buttonText = button.textContent.trim(); 
         if (button.className==('key backspace')){
             event.key = 'Backspace'
             handleKeyPress(event)
@@ -252,11 +260,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             handleKeyPress(event);
         }
         event.key = buttonText
-        // Output the text of the clicked button
+        
         typeLetter(buttonText)
     
-        // You can use the buttonText variable to perform further actions
-        // For example, appending it to a display area or processing it in some way
     }
     document.addEventListener('keydown', handleKeyPress);
 
@@ -267,13 +273,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     continueBtn.addEventListener('click', () => {
         gameModal.style.display = 'none';
-        // Add your "continue" logic here
+        
     });
     manageCalculationThread();
     gridPane.focus();
 });
 
 window.onclick = function(event) {
+    // disables the dropdown when the window is clicked
     if (!event.target.matches('.menu-button')) {
         var dropdowns = document.getElementsByClassName("dropdown-content");
         for (var i = 0; i < dropdowns.length; i++) {

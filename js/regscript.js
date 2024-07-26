@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const ROWS = 6;
     const COLUMNS = 5;
     let URL = window.location.href;
-    URL = URL.slice(0,URL.lastIndexOf('/'));
+    URL = URL.slice(0,URL.lastIndexOf('/')); // this is becasue github pages handles file references wierdly
     const answerList = URL +'/assets/possibleAnswers.txt';
     const guessList = URL +'/assets/possibleGuesses.txt';
     const secondGuessesList = URL + '/assets/secondGuesses.txt';
@@ -103,9 +103,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     function updateColours(row) {
+        //visually changes the colours
         clickCounts[row] = gamelogic.getColours(characters[row].join(''), answer);
         
-    
         for (let col = 0; col < clickCounts[row].length; col++) {
             if (clickCounts[row][col] === 0) {
                 buttons[row][col].style.backgroundColor = colourCodes[1];
@@ -118,6 +118,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     function deactivateLastRow() {
+        //deactivates the last row, not needed in this script
         if (lastActivatedRow >= 0) {
             for (let col = 0; col < COLUMNS; col++) {
                 buttons[lastActivatedRow][col].disabled = true;
@@ -177,10 +178,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         return keys;
     }
 
-     // Function to show the modal
+     
      function handleKeyClick(event) {
-        const button = event.target; // Get the clicked button element
-        const buttonText = button.textContent.trim(); // Get the text of the button
+        //handles clicks on the displayed keyboard
+        const button = event.target;
+        const buttonText = button.textContent.trim();
         if (button.className==('key backspace')){
             event.key = 'Backspace'
             handleKeyPress(event)
@@ -190,13 +192,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             handleKeyPress(event);
         }
         event.key = buttonText
-        // Output the text of the clicked button
+
         typeLetter(buttonText)
     
-        // You can use the buttonText variable to perform further actions
-        // For example, appending it to a display area or processing it in some way
+        
     }
     function updateKeyColors(){
+        //changes the colour of the keyboard like the regular 'wordle' game
         const newKeyColours = Array(26).fill(-1);
         for(let color = 0; color < 3; color++){
             for(let row = 0; row < ROWS; row++) {
@@ -254,9 +256,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 continueBtn.parentElement.removeChild(continueBtn); // Remove the button from the DOM
             }
         } else {
-            // If continue button is removed and should be added back
+            // This was annoying me
             if (!document.getElementById('continueBtn')) {
-                // Assuming you want to re-add the button, adjust as needed
+                
                 gameModal.appendChild(continueBtn);
             }
             continueBtn.style.display = 'inline-block'; // Make sure it is visible
@@ -273,23 +275,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         gameModal.style.display = 'none';
     }
 
-    // Event listeners for the buttons
     tryAgainBtn.addEventListener('click', () => {
         hideGameModal();
         location.reload();
-        // Add your "try again" logic here
         console.log("Try Again clicked");
     });
 
     continueBtn.addEventListener('click', () => {
         hideGameModal();
-        // Add your "continue" logic here
     });
     
     
 
-    // Example of how to call the showFailModal function
-    // You can call this function wherever needed in your code
 
     document.addEventListener('keydown', handleKeyPress);
     

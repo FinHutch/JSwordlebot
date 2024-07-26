@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const ROWS = 6;
     const COLUMNS = 5;
     let URL = window.location.href;
-    URL = URL.slice(0,URL.lastIndexOf('/'));
+    URL = URL.slice(0,URL.lastIndexOf('/'));  // this is becasue github pages handles file references wierdly
     const answerList = URL +'/assets/possibleAnswers.txt';
     const guessList = URL +'/assets/possibleGuesses.txt';
     const secondGuessesList = URL + '/assets/secondGuesses.txt';
@@ -48,10 +48,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const titleLabe2 = document.getElementById('titleLabel2');
     const gridPane2 = document.getElementById('gridPane2');
     const titleLabel = document.getElementById('titleLabel');
-    // Initialize the worker
+    
     let worker= null; 
 
-    // Handle messages from the worker
+    
     
     function terminateWorker() {
         if (worker) {
@@ -88,6 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
     window.onclick = function(event) {
+        //disables dropdown when clicked outside of it
         if (!event.target.matches('.menu-button')) {
             var dropdowns = document.getElementsByClassName("dropdown-content");
             for (var i = 0; i < dropdowns.length; i++) {
@@ -100,8 +101,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function manageCalculationThread() {
+        //calculates the next best guess on a seperate thread
         updateTitleText("Computer thinking");
-        // Send data to the worker
+        
         calculating = true;
         if (worker) {
             worker.terminate();
@@ -135,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function activateNextRow() {
-        
+        // handles what happens when the next row is activated
         if (lastActivatedRow < ROWS - 1 && calculating == false) {
             if(playerSolved || guesslist.includes(characters1[lastActivatedRow+1].join(''))){
                 currentColumn = 0;
@@ -151,7 +153,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     updateColours2(lastActivatedRow);
                     manageCalculationThread();
                     showComputerLetters();
-                    // Wait for `calculating` to become false before continuing
+                    // make sure this isn't called when the computer is still thinking
                     waitForVariableChange(() => calculating, false).then(() => {
                         currentColumn = COLUMNS;
                         activateNextRow();
@@ -181,6 +183,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 
                 if (lastActivatedRow == ROWS -1 &&calculating == false){
+                    //what happens if they get to the last row
                     showComputerLetters();
                     if (playerSolved ==computerSolved){showGameModal('It\'s a tie!',false, 'You both got it on the last guess. Poor from both of you.');}
                     else if (!playerSolved && computerSolved){showGameModal('You failed',false,':( refresh to try again, or check out the other game modes in the menu')}
@@ -194,6 +197,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     function updateColours1(row) {
+        //handles the visual appearence of the players tile colours
         clickCounts1[row] = gamelogic.getColours(characters1[row].join(''), answer);
         
        
@@ -211,6 +215,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     function updateColours2(row) {
+        // handles the visual colours of the computers tile colours
         clickCounts2[row] = gamelogic.getColours(characters2[row].join(''), answer);
        
         for (let col = 0; col < clickCounts1[row].length; col++) {
@@ -226,6 +231,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     function updateKeyColors(){
+        // handles the colours of the keys just like the wordle game
         const newKeyColours = Array(26).fill(-1);
         for(let color = 0; color < 3; color++){
             for(let row = 0; row < ROWS; row++) {
@@ -254,6 +260,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function handleKeyPress(event) {
+        //handles key presses
         if (event.key === 'Enter') {
             event.preventDefault();
             activateNextRow();
@@ -273,6 +280,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function typeLetter(letter) {
+        // types a letter in the players grid
         if (letter.length === 1 && /[a-zA-Z]/.test(letter) && currentColumn < COLUMNS) {
             buttons1[lastActivatedRow + 1][currentColumn].textContent = letter.toUpperCase();
             buttons1[lastActivatedRow + 1][currentColumn].style.borderColor = 'black';
@@ -281,18 +289,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     function initializeKeys() {
-        // Query all the buttons with the class 'key'
+        // Query all the key buttons
         const keyInfo = document.querySelectorAll('#keyboard-container .key');
         const keys = Array(26).fill(null);
     
-        // Iterate over each button
+  
         keyInfo.forEach(button => {
-            const keyText = button.textContent.toLowerCase(); // Get the text and normalize it
+            const keyText = button.textContent.toLowerCase(); 
     
-            // Check if the button text is a single letter (ignore special keys)
+
             if (keyText.length === 1 && /^[a-z]$/.test(keyText)) {
                 const index = keyText.charCodeAt(0) - 'a'.charCodeAt(0); // Calculate index (0 for 'a', 1 for 'b', etc.)
-                keys[index] = button; // Store the button in the array
+                keys[index] = button; 
             }
         });
     
@@ -301,8 +309,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         return keys;
     }
     function handleKeyClick(event) {
-        const button = event.target; // Get the clicked button element
-        const buttonText = button.textContent.trim(); // Get the text of the button
+        const button = event.target; 
+        const buttonText = button.textContent.trim(); 
         if (button.className==('key backspace')){
             event.key = 'Backspace'
             handleKeyPress(event)
@@ -312,68 +320,67 @@ document.addEventListener('DOMContentLoaded', async () => {
             handleKeyPress(event);
         }
         event.key = buttonText
-        // Output the text of the clicked button
+        
         typeLetter(buttonText)
     
-        // You can use the buttonText variable to perform further actions
-        // For example, appending it to a display area or processing it in some way
+        
     }
     
-     // Function to show the modal
+  
      function showGameModal(state, disableContinue = false,state2 = '',disableTryAgain = true) {
-        // Update modal title and message based on the state
+      
             modalTitle.innerText = state;
             modalMessage.innerText = state2;
         
     
-        // Remove or show the "Continue" button based on disableContinue
+    
         if (disableTryAgain) {
             if (tryAgainBtn.parentElement) {
                 tryAgainBtn.parentElement.removeChild(tryAgainBtn); // Remove the button from the DOM
             }
         } else {
-            // If continue button is removed and should be added back
+           
             if (!document.getElementById('tryAgainBtn')) {
-                // Assuming you want to re-add the button, adjust as needed
+              
                 gameModal.appendChild(tryAgainBtn);
             }
-            tryAgainBtn.style.display = 'inline-block'; // Make sure it is visible
+            tryAgainBtn.style.display = 'inline-block'; 
         }
         if (disableContinue) {
             if (continueBtn.parentElement) {
-                continueBtn.parentElement.removeChild(continueBtn); // Remove the button from the DOM
+                continueBtn.parentElement.removeChild(continueBtn); 
             }
         } else {
-            // If continue button is removed and should be added back
+          
             if (!document.getElementById('continueBtn')) {
-                // Assuming you want to re-add the button, adjust as needed
+              
                 gameModal.appendChild(continueBtn);
             }
-            continueBtn.style.display = 'inline-block'; // Make sure it is visible
+            continueBtn.style.display = 'inline-block'; 
         }
     
-        // Display the modal
+ 
         gameModal.style.display = 'block';
     }
     
     
 
-    // Function to hide the modal
+
     function hideGameModal() {
         gameModal.style.display = 'none';
     }
 
-    // Event listeners for the buttons
+
     tryAgainBtn.addEventListener('click', () => {
         hideGameModal();
         location.reload();
-        // Add your "try again" logic here
+
         console.log("Try Again clicked");
     });
 
     continueBtn.addEventListener('click', () => {
         hideGameModal();
-        // Add your "continue" logic here
+
     });
     function waitForVariableChange(variableGetter, value) {
         return new Promise((resolve) => {
@@ -396,8 +403,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Example of how to call the showFailModal function
-    // You can call this function wherever needed in your code
+    
 
     document.addEventListener('keydown', handleKeyPress);
     
@@ -412,13 +418,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function getRandomString(stringList) {
+    // this is so the computer on the vs mode doesn't pick the same first guess every time
     if (stringList.length === 0) {
         throw new Error('The list is empty.');
     }
 
-    // Generate a random index
+ 
     const randomIndex = Math.floor(Math.random() * stringList.length);
     
-    // Return the string at the random index
     return stringList[randomIndex];
 }

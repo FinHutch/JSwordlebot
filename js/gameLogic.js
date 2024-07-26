@@ -26,6 +26,7 @@ export class GameLogic {
     }
 
     async calculate(characters, clickCounts, lastActivatedRow, bigPool = false, randomStartingGuess = false) {
+        // calculate the best guess given the scenario
         await this. initialize(); // Ensure the lists are fully loaded before calculation
 
         let allLetterInfo = this.addRowInformation(characters, clickCounts, lastActivatedRow, bigPool);
@@ -77,10 +78,12 @@ export class GameLogic {
     }
 
     getModulo3List(array) {
+        //the colour of the tile is the number of clicks modulo 3
         return array.map(value => value % 3);
     }
 
     addRowInformation(characters, clickCounts, lastActivatedRow) {
+        // adds the most recent word to the data
         let mainInfo = [];
         for (let row = 0; row <= lastActivatedRow; row++) {
             let clickCountsForRowList = Array.from(clickCounts[row]);
@@ -91,6 +94,7 @@ export class GameLogic {
     }
 
     combineLetterInfos(letterInfoList1, letterInfoList2) {
+        //combines the information from seperate words into one set of information
         for (let letter2 of letterInfoList2) {
             let sharedInfo = false;
             for (let i = 0; i < letterInfoList1.length; i++) {
@@ -114,6 +118,7 @@ export class GameLogic {
     }
 
     getInfo(word, wordColours) {
+        //converts the colours into useful information for the guesser
         let tempList = [];
         let letters = Array(this.COLUMNS).fill(null);
         let lettersFound = 0;
@@ -167,6 +172,7 @@ export class GameLogic {
     }
 
     compareLetterInfo(letter1, letter2) {
+        //gives information for a new instance of letter
         if (letter2.numberKnown && !letter1.numberKnown) {
             return this.compareLetterInfo(letter2, letter1);
         }
@@ -202,6 +208,7 @@ export class GameLogic {
     }
 
     reduceList(conditions, words) {
+        // breaks down the list into only words that meet the requirements of the wordle state
         if (!Array.isArray(words)) {
             console.error('Words is not an array:', words);
             return [];
@@ -210,6 +217,7 @@ export class GameLogic {
     }
 
     fitsConditions(word, conditions) {
+        // figures out if a word is valid given the current wordle state
         for (let letterInfo of conditions) {
             let letterCount = 0;
             let letter = letterInfo.letter;
@@ -228,6 +236,7 @@ export class GameLogic {
     }
 
     findBestGuess(wordList, guessList) {
+        // calculates the best guess given the average words remaining in each guess
         let topScore = 3000;
         let topGuess = " ";
         for (let guess of guessList) {
@@ -241,6 +250,8 @@ export class GameLogic {
     }
 
     findAverageWordsLeft(guess, wordList) {
+        //finds the average words left given the guess
+        //uses maps to decrease computation time
         let score = 0;
         const size = wordList.length;
         const colourOccurrences = new Map();
@@ -278,10 +289,12 @@ export class GameLogic {
     }
 
     sameColours(list1, list2) {
+
         return list1.length === list2.length && list1.every((value, index) => value === list2[index]);
     }
 
     calculateScore(word, guess) {
+        // I can't remember what this one does
         let score = Array(this.COLUMNS).fill(0);
         let occurrences = Array(this.COLUMNS).fill(0);
         for (let i = 0; i < this.COLUMNS; i++) {
@@ -307,6 +320,7 @@ export class GameLogic {
         return score;
     }
     getColours(guess, answer) {
+        // gets the colours that the guess would generate
         const coloursGuess = Array(guess.length).fill(0);
         const coloursAnswer = Array(guess.length).fill(0);
     
@@ -338,6 +352,7 @@ export class GameLogic {
         return coloursGuess;
     }
     base3ToBase10(base3) {
+        //converts a base 3 number to a base 10 number this is used to go through all the colours
         let base10 = 0;
         const length = base3.length;
 
@@ -349,15 +364,16 @@ export class GameLogic {
         return base10;
     }
     getAnswerList() {
-        return answerList;  // Simplified
+        return answerList;  
     }
 
     getGuessList() {
-        return guessList;  // Simplified
+        return guessList;  
     }
 }
 
 export async function fetchWordList(fileName) {
+    // fetches the word list from a file
     try {
         const response = await fetch(fileName); // Wait for the fetch operation to complete
         if (!response.ok) {
@@ -378,6 +394,7 @@ export async function fetchWordList(fileName) {
 }
 
 export async function fetchGuessesList(fileName) {
+    //fetches all 5 letter words from a file including those that aren't in guesslist
     try {
         const response = await fetch(fileName); // Wait for the fetch operation to complete
         if (!response.ok) {
