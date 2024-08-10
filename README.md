@@ -18,4 +18,4 @@ The **Wordle Solver** uses an algorithm to determine the optimal next guess for 
 
 ## Try it out
 
-- https://finhutch.github.io/JSwordlebot
+- https://finhutch.github.io/JSwordlebot/game2.html
