@@ -1,9 +1,9 @@
 # JSwordlebot
 
-**JSwordlebot** is a web-based application that features three engaging Wordle-related games:
+**JSwordlebot** is a web-based application that features three Wordle-related games:
 
 1. **Regular Wordle**: Play the classic Wordle game directly within your browser.
-2. **Wordle Solver**: Use our bot to assist in solving Wordle puzzles. Input a puzzle, and the bot will suggest the next best guess based on its algorithm.
+2. **Wordle Solver**: Use the bot to assist in solving Wordle puzzles. Input a puzzle, and the bot will suggest the next best guess based on its algorithm.
 3. **Head-to-Head**: Challenge the Wordle bot in a competitive game to see who can guess the word faster.
 
 ## How It Works
@@ -13,13 +13,8 @@ The **Wordle Solver** uses an algorithm to determine the optimal next guess for 
 ### Algorithm Overview
 
 - **Strategy**: The algorithm calculates which guess will most efficiently reduce the size of the remaining word list.
-- **Performance**: Although the algorithm is highly effective, it is not flawless. While it aims to minimize the average number of remaining guesses, it doesn't always select the optimal guess. The average number of guesses with this approach is approximately **3.44**, compared to **3.42** with a theoretically perfect algorithm.
+- **Performance**: Although the algorithm is pretty good, it is not flawless. While it aims to minimize the average number of remaining guesses, it doesn't always select the optimal guess. The average number of guesses with this approach is approximately **3.44**, compared to **3.42** average guesses for the best solution made by anyone.
 
-## Features
-
-- **Interactive UI**: Easy-to-use interface for playing and interacting with the bot.
-- **Real-Time Suggestions**: Receive real-time guesses from the bot based on your inputs.
-- **Competitive Mode**: Test your skills against the bot in a head-to-head format.
 
 ## Try it out
 
